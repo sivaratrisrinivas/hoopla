@@ -2,3 +2,4 @@ data/
 .venv/
 .python-version
 uv.lock
+cli/lib/__pycache__
