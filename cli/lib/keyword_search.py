@@ -1,4 +1,5 @@
 import string
+from nltk.stem import PorterStemmer
 
 from .search_utils import (
     DEFAULT_SEARCH_LIMIT,
@@ -25,6 +26,15 @@ def preprocess_text(text: str) -> str:
     text = text.translate(str.maketrans("", "", string.punctuation))
     return text
 
+
+def has_matching_token(query_tokens: list[str], title_tokens: list[str]) -> bool:
+    for query_token in query_tokens: 
+        for title_token in title_tokens: 
+            if query_token in title_token: 
+                return True
+    return False
+
+
 def tokenize_text(text: str) -> list[str]: 
     text = preprocess_text(text)
     tokens = text.split()
@@ -37,15 +47,9 @@ def tokenize_text(text: str) -> list[str]:
     for word in valid_tokens:
         if word not in stopwords: 
             filtered_words.append(word)
-    return filtered_words
-
-def has_matching_token(query_tokens: list[str], title_tokens: list[str]) -> bool:
-    for query_token in query_tokens: 
-        for title_token in title_tokens: 
-            if query_token in title_token: 
-                return True
-    return False
-
-
-
+    stemmer = PorterStemmer()
+    stemmed_words = []
+    for word in filtered_words:
+        stemmed_words.append(stemmer.stem(word))
+    return stemmed_words
 
