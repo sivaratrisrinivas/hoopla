@@ -3,3 +3,4 @@ data/
 .python-version
 uv.lock
 cli/lib/__pycache__
+cache/
