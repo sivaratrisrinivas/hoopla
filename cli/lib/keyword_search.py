@@ -1,7 +1,7 @@
 import os
 import string
 import pickle
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from nltk.stem import PorterStemmer
 
@@ -15,9 +15,11 @@ from .search_utils import (
 class InvertedIndex: 
     def __init__(self) -> None:
         self.index = defaultdict(set)
+        self.term_frequencies = defaultdict(Counter)
         self.docmap: dict[int, dict] = {}
         self.index_path = os.path.join(CACHE_DIR, "index.pkl")
         self.docmap_path = os.path.join(CACHE_DIR, "docmap.pkl")
+        self.term_frequencies_path = os.path.join(CACHE_DIR, "term_frequencies.pkl")
 
     def build(self) -> None: 
         movies = load_movies()
@@ -33,23 +35,38 @@ class InvertedIndex:
             pickle.dump(self.index, f)
         with open(self.docmap_path, "wb") as f:
             pickle.dump(self.docmap, f)
+        with open(self.term_frequencies_path, "wb") as f: 
+            pickle.dump(self.term_frequencies, f)
 
     def load(self) -> None:
         with open(self.index_path, "rb") as f:
             self.index = pickle.load(f)
         with open(self.docmap_path, "rb") as f:
             self.docmap = pickle.load(f)
+        with open(self.term_frequencies_path, "rb") as f:
+            self.term_frequencies = pickle.load(f)
 
 
     
     def __add_document(self, doc_id: int, text: str) -> None:
         tokens = tokenize_text(text)
         for token in tokens:
+            self.term_frequencies[token][doc_id] += 1
             self.index[token].add(doc_id)
     
     def get_documents(self, term: str) -> list[int]:
         doc_ids = self.index.get(term, set())
         return sorted(list(doc_ids))
+
+    def get_tf(self, doc_id: str, term: str) -> int:
+        tokens = tokenize_text(term)
+        if len(tokens) != 1:
+            raise ValueError("Expected a single-token term")
+        token = tokens[0]
+        if doc_id in self.term_frequencies[token]:
+            return self.term_frequencies[token][doc_id]
+        else:
+            return 0
 
         
 
