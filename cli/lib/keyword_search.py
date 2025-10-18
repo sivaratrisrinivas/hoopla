@@ -51,8 +51,8 @@ class InvertedIndex:
     def __add_document(self, doc_id: int, text: str) -> None:
         tokens = tokenize_text(text)
         for token in tokens:
-            self.term_frequencies[token][doc_id] += 1
             self.index[token].add(doc_id)
+        self.term_frequencies[token].update(tokens)
     
     def get_documents(self, term: str) -> list[int]:
         doc_ids = self.index.get(term, set())
@@ -63,10 +63,7 @@ class InvertedIndex:
         if len(tokens) != 1:
             raise ValueError("Expected a single-token term")
         token = tokens[0]
-        if doc_id in self.term_frequencies[token]:
-            return self.term_frequencies[token][doc_id]
-        else:
-            return 0
+        return self.term_frequencies[doc_id][token]
 
         
 
@@ -127,4 +124,9 @@ def tokenize_text(text: str) -> list[str]:
     for word in filtered_words:
         stemmed_words.append(stemmer.stem(word))
     return stemmed_words
+
+def tf_command(doc_id: int, term: str) -> int:
+    idx = InvertedIndex()
+    idx.load()
+    return idx.get_tf(doc_id, term)
 

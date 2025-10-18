@@ -2,19 +2,20 @@
 
 import argparse
 
-from lib.keyword_search import search_command, build_command, InvertedIndex
+from lib.keyword_search import search_command, build_command, tf_command
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Keyword Search CLI")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    build_parser = subparsers.add_parser("build", help="Build the inverted index")
-    tf_parser = subparsers.add_parser("tf", help="Get the term frequency of a term in a document")
-    tf_parser.add_argument("doc_id", type=int, help="Document ID")
-    tf_parser.add_argument("term", type=str, help="Term")
+    subparsers.add_parser("build", help="Build the inverted index")
+
     search_parser = subparsers.add_parser("search", help="Search movies using BM25")
     search_parser.add_argument("query", type=str, help="Search query")
+    tf_parser = subparsers.add_parser("tf", help="Get the term frequency of a term in a document")
+    tf_parser.add_argument("doc_id", type=int, help="Document ID")
+    tf_parser.add_argument("term", type=str, help="Term to get frequency for")
 
     args = parser.parse_args()
 
@@ -29,12 +30,10 @@ def main() -> None:
             for i, res in enumerate(results, 1):
                 print(f"{i}. ({res['id']}) {res['title']}")
         case "tf":
-            idx = InvertedIndex()
-            idx.load()
-            tf = idx.get_tf(args.doc_id, args.term)
-            print(f"{tf}")
+            tf = tf_command(args.doc_id, args.term)
+            print(f"Term frequency of '{args.term}' in document '{args.doc_id}': {tf}")
         case _:
-            parser.print_help()
+            parser.exit(2, parser.format_help())
 
 
 
