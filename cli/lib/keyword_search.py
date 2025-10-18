@@ -52,7 +52,7 @@ class InvertedIndex:
         tokens = tokenize_text(text)
         for token in tokens:
             self.index[token].add(doc_id)
-        self.term_frequencies[token].update(tokens)
+        self.term_frequencies[doc_id].update(tokens)
     
     def get_documents(self, term: str) -> list[int]:
         doc_ids = self.index.get(term, set())
