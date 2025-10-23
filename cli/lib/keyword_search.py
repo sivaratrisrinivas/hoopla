@@ -114,6 +114,41 @@ class InvertedIndex:
         saturated_tf_score = tf_component
         return saturated_tf_score
 
+    def bm25(self, doc_id: int, term: str) -> float:
+        bm25_tf = self.get_bm25_tf(doc_id, term)
+        bm25_idf = self.get_bm25_idf(term)
+        return bm25_tf * bm25_idf
+
+    def bm25_search(self, query: str, limit: int) -> list[dict]:
+        query_tokens = tokenize_text(query)
+        scores = {}
+
+        for doc_id in self.docmap:
+            total_score = 0.0
+            for token in query_tokens:
+                # Only consider BM25 if the token is in the index (appears in at least one document)
+                if token in self.index:
+                    total_score += self.bm25(doc_id, token)
+            if total_score > 0.0:
+                scores[doc_id] = total_score
+
+        # Sort documents by score descending
+        sorted_doc_ids = sorted(scores, key=lambda x: scores[x], reverse=True)
+
+        # Prepare output: list of dicts with document and score
+        results = []
+        for doc_id in sorted_doc_ids[:limit]:
+            doc = self.docmap[doc_id]
+            results.append({
+                "id": doc_id,
+                "title": doc.get("title", ""),
+                "score": scores[doc_id]
+            })
+        return results
+        
+
+
+
 
 
         
@@ -201,4 +236,9 @@ def bm25_tf_command(doc_id: int, term: str, k1: float = BM25_K1, b: float = BM25
     idx.load()
     bm25_tf_score = idx.get_bm25_tf(doc_id, term, k1, b)
     return bm25_tf_score
+
+def bm25_search_command(query: str, limit: int = DEFAULT_SEARCH_LIMIT) -> list[dict]:
+    idx = InvertedIndex()
+    idx.load()
+    return idx.bm25_search(query, limit)
 
