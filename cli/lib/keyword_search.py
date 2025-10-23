@@ -9,11 +9,13 @@ from nltk.stem import PorterStemmer
 from .search_utils import (
     BM25_K1,
     DEFAULT_SEARCH_LIMIT,
+    SCORE_PRECISION,
     BM25_K1,
     BM25_B,
     CACHE_DIR,
     load_movies,
     load_stopwords,
+    format_search_result,
 )
 
 class InvertedIndex: 
@@ -65,9 +67,11 @@ class InvertedIndex:
         self.term_frequencies[doc_id].update(tokens)
 
     def __get_avg_doc_length(self) -> float:
-        if not self.doc_lengths:
+        if not self.doc_lengths or len(self.doc_lengths) == 0:
             return 0.0
-        total_length = sum(self.doc_lengths.values())
+        total_length = 0.0
+        for length in self.doc_lengths.values():
+            total_length += length
         return total_length / len(self.doc_lengths)
     
     def get_documents(self, term: str) -> list[int]:
@@ -121,29 +125,26 @@ class InvertedIndex:
 
     def bm25_search(self, query: str, limit: int) -> list[dict]:
         query_tokens = tokenize_text(query)
+
         scores = {}
-
         for doc_id in self.docmap:
-            total_score = 0.0
+            score = 0.0
             for token in query_tokens:
-                # Only consider BM25 if the token is in the index (appears in at least one document)
-                if token in self.index:
-                    total_score += self.bm25(doc_id, token)
-            if total_score > 0.0:
-                scores[doc_id] = total_score
-
-        # Sort documents by score descending
-        sorted_doc_ids = sorted(scores, key=lambda x: scores[x], reverse=True)
-
-        # Prepare output: list of dicts with document and score
+                score += self.bm25(doc_id, token)
+            scores[doc_id] = score
+        
+        sorted_docs = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        
         results = []
-        for doc_id in sorted_doc_ids[:limit]:
+        for doc_id, score in sorted_docs[:limit]:
             doc = self.docmap[doc_id]
-            results.append({
-                "id": doc_id,
-                "title": doc.get("title", ""),
-                "score": scores[doc_id]
-            })
+            formatted_result = format_search_result(
+                doc_id=doc["id"],
+                title=doc["title"],
+                document=doc["description"],
+                score=score,
+            )
+            results.append(formatted_result)
         return results
         
 

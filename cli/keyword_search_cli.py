@@ -3,7 +3,7 @@
 import argparse
 
 from lib.search_utils import BM25_K1, BM25_B
-from lib.keyword_search import InvertedIndex, search_command, build_command, tf_command, idf_command, tfidf_command, bm25_idf_command, bm25_tf_command, bm25_search_command
+from lib.keyword_search import search_command, build_command, tf_command, idf_command, tfidf_command, bm25_idf_command, bm25_tf_command, bm25_search_command
 
 
 
@@ -68,6 +68,7 @@ def main() -> None:
             bm25tf = bm25_tf_command(args.doc_id, args.term, args.k1, args.b)
             print(f"BM25 TF score of '{args.term}' in document '{args.doc_id}': {bm25tf:.2f}")
         case "bm25search":
+            print("Searching for:", args.query)
             results = bm25_search_command(args.query, args.limit)
             for i, res in enumerate(results, 1):
                 print(f"{i}. ({res['id']}) {res['title']} - Score: {res['score']:.2f}")
