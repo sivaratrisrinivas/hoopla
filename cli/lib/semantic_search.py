@@ -10,7 +10,7 @@ MOVIE_EMBEDDINGS_PATH = os.path.join(CACHE_DIR, "movie_embeddings.npy")
 
 class SemanticSearch:
     def __init__(self, model_name = "all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer(model_name)
+        self.model = SentenceTransformer(model_name, device="cpu")
         self.embeddings = None
         self.documents = None
         self.document_map = {}
@@ -72,4 +72,11 @@ def verify_embeddings():
     embeddings = semantic_search_instance.load_or_create_embeddings(documents)
     print(f"Number of docs:   {len(documents)}")
     print(f"Embeddings shape: {embeddings.shape[0]} vectors in {embeddings.shape[1]} dimensions")
+
+def embed_query_text(query: str):
+    semantic_search_instance = SemanticSearch()
+    embedding = semantic_search_instance.generate_embedding(query)
+    print(f"Query: {query}")
+    print(f"First 5 dimensions: {embedding[:5]}")
+    print(f"Shape: {embedding.shape}")
 
