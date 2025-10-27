@@ -37,6 +37,7 @@ python cli/keyword_search_cli.py bm25search "romantic comedy" --limit 10
 # Semantic search for movies
 python cli/semantic_search_cli.py verify  # Verify model is loaded
 python cli/semantic_search_cli.py embed_text "Luke, I am your father"  # Test embedding
+python cli/semantic_search_cli.py verify_embeddings  # Verify embeddings are loaded
 ```
 
 ## Available Commands
@@ -53,7 +54,7 @@ python cli/semantic_search_cli.py embed_text "Luke, I am your father"  # Test em
 ### Semantic Search Commands
 - `verify` - Verify that the embedding model is loaded correctly
 - `embed_text <text>` - Generate and display text embeddings
-- `embed <text>` - Alternative command for text embedding
+- `verify_embeddings` - Verify that movie embeddings are loaded and show statistics
 
 ## Data
 
@@ -69,6 +70,7 @@ The system searches through a dataset of movies with titles and descriptions. Th
 
 ### Semantic Search
 - Uses sentence-transformers library with all-MiniLM-L6-v2 model
-- Generates 384-dimensional embeddings
-- Runs on CPU to avoid CUDA compatibility issues
+- Generates 384-dimensional embeddings for movie descriptions
+- Automatically caches embeddings to `cache/movie_embeddings.npy` for fast loading
 - Supports text similarity and semantic understanding
+- Loads pre-computed embeddings when available, builds them on first run
