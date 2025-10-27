@@ -10,10 +10,10 @@ def main():
 
     subparsers.add_parser("verify", help="Verify that the embedding model is loaded")
     
-    embed_text_parser = subparsers.add_parser("embed_text", help="Embed a text")
-    embed_text_parser.add_argument("text", type=str, help="Text to embed")
+    single_embed_parser = subparsers.add_parser("embed_text", help="Embed a text")
+    single_embed_parser.add_argument("text", type=str, help="Text to embed")
 
-    verify_embeddings_parser = subparsers.add_parser("verify_embeddings", help="Verify that the embeddings are loaded")
+    subparsers.add_parser("verify_embeddings", help="Verify the embeddings for movie dataset")
 
     
     args = parser.parse_args()

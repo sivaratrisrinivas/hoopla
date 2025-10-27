@@ -1,39 +1,44 @@
 import os
-from .search_utils import load_movies
 import numpy as np
+
+from .search_utils import CACHE_DIR, load_movies
+
 from sentence_transformers import SentenceTransformer
+
+MOVIE_EMBEDDINGS_PATH = os.path.join(CACHE_DIR, "movie_embeddings.npy")
 
 
 class SemanticSearch:
     def __init__(self, model_name = "all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer(model_name, device="cpu")
+        self.model = SentenceTransformer(model_name)
         self.embeddings = None
         self.documents = None
         self.document_map = {}
     
     def build_embeddings(self, documents: list[dict]):
         self.documents = documents
+        self.document_map = {}
+        movie_strings = []
         for document in documents:
             self.document_map[document["id"]] = document
-        
-        # Create string representations of all documents
-        document_strings = []
-        for document in documents:
-            document_string = f"{document['title']}: {document['description']}"
-            document_strings.append(document_string)
-        
-        # Encode all documents at once
-        self.embeddings = self.model.encode(document_strings, show_progress_bar=True)
-        np.save("cache/movie_embeddings.npy", self.embeddings)
+            movie_strings.append(f"{document['title']}: {document['description']}")
+        self.embeddings = self.model.encode(movie_strings, show_progress_bar=True)
+
+        os.makedirs(os.path.dirname(MOVIE_EMBEDDINGS_PATH), exist_ok=True)
+        np.save(MOVIE_EMBEDDINGS_PATH, self.embeddings)
         return self.embeddings
 
     def load_or_create_embeddings(self, documents: list[dict]):
         self.documents = documents
-        self.document_map = {document["id"]: document for document in documents}
-        if os.path.exists("cache/movie_embeddings.npy"):
-            self.embeddings = np.load("cache/movie_embeddings.npy")
+        self.document_map = {}
+        for document in documents:
+            self.document_map[document["id"]] = document
+
+        if os.path.exists(MOVIE_EMBEDDINGS_PATH):
+            self.embeddings = np.load(MOVIE_EMBEDDINGS_PATH)
             if len(self.embeddings) == len(documents):
                 return self.embeddings
+
         return self.build_embeddings(documents)
 
 
@@ -63,8 +68,8 @@ def verify_model():
 
 def verify_embeddings():
     semantic_search_instance = SemanticSearch()
-    movies = load_movies()
-    semantic_search_instance.load_or_create_embeddings(movies)
-    print(f"Number of docs:   {len(semantic_search_instance.documents)}")
-    print(f"Embeddings shape: {semantic_search_instance.embeddings.shape[0]} vectors in {semantic_search_instance.embeddings.shape[1]} dimensions")
+    documents = load_movies()
+    embeddings = semantic_search_instance.load_or_create_embeddings(documents)
+    print(f"Number of docs:   {len(documents)}")
+    print(f"Embeddings shape: {embeddings.shape[0]} vectors in {embeddings.shape[1]} dimensions")
 
