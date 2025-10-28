@@ -16,7 +16,7 @@ def main():
     subparsers.add_parser("verify_embeddings", help="Verify the embeddings for movie dataset")
     
     query_embed_parser = subparsers.add_parser("embedquery", help="Embed a query text")
-    query_embed_parser.add_argument("text", type=str, help="Query text to embed")
+    query_embed_parser.add_argument("query", type=str, help="Query to embed")
     
     args = parser.parse_args()
 
@@ -26,7 +26,7 @@ def main():
         case "embed_text":
             embed_text(args.text)
         case "embedquery":
-            embed_query_text(args.text)
+            embed_query_text(args.query)
         case "verify_embeddings":
             verify_embeddings()
         case _:
