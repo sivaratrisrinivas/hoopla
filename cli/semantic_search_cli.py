@@ -3,7 +3,7 @@
 import argparse
 
 from lib.search_utils import load_movies
-from lib.semantic_search import embed_text, verify_model, verify_embeddings, embed_query_text, SemanticSearch
+from lib.semantic_search import embed_text, verify_model, verify_embeddings, embed_query_text, semantic_search
 
 def main():
     parser = argparse.ArgumentParser(description="Semantic Search CLI")
@@ -35,13 +35,7 @@ def main():
         case "verify_embeddings":
             verify_embeddings()
         case "search":
-            movies = load_movies()
-            search_instance = SemanticSearch()
-            search_instance.load_or_create_embeddings(movies)
-            results = search_instance.search(args.query, args.limit)
-            for i, res in enumerate(results, 1):
-                print(f"{i}. {res['title']} (score: {res['score']:.4f})")
-                print(f"   {res['description']}")
+            semantic_search(args.query, args.limit)
         case _:
             parser.print_help()
 
