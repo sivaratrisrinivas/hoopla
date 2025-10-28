@@ -1,6 +1,6 @@
 # Hoopla
 
-A movie search engine that uses advanced text search algorithms to find relevant movies from a large dataset.
+A movie search engine that uses both BM25 ranking and semantic search algorithms to find relevant movies from a large dataset.
 
 ## What
 
@@ -67,9 +67,8 @@ python cli/keyword_search_cli.py bm25search "romantic comedy" --limit 10
 
 # Semantic search setup and testing
 python cli/semantic_search_cli.py verify  # Verify model is loaded
-python cli/semantic_search_cli.py embed_text "Luke, I am your father"  # Test embedding
 python cli/semantic_search_cli.py verify_embeddings  # Verify embeddings are loaded
-python cli/semantic_search_cli.py embedquery "space adventure"  # Test query embedding
+python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search movies semantically
 ```
 
 ## Available Commands
@@ -86,9 +85,10 @@ python cli/semantic_search_cli.py embedquery "space adventure"  # Test query emb
 
 ### Semantic Search Commands
 - `verify` - Verify that the embedding model is loaded correctly
-- `embed_text <text>` - Generate and display text embeddings
-- `embedquery <query>` - Generate and display query embeddings
 - `verify_embeddings` - Verify that movie embeddings are loaded and show statistics
+- `search <query>` - Search for movies using semantic similarity
+- `embed_text <text>` - Generate and display text embeddings (debugging)
+- `embedquery <query>` - Generate and display query embeddings (debugging)
 
 ## Data
 
@@ -101,6 +101,7 @@ The system searches through a dataset of movies with titles and descriptions. Th
 - Implements BM25 with configurable parameters (k1=1.5, b=0.75)
 - Caches processed data for performance
 - Supports custom search limits and parameter tuning
+- Provides detailed TF-IDF and BM25 scoring for analysis
 
 ### Semantic Search
 - Uses sentence-transformers library with all-MiniLM-L6-v2 model
@@ -108,3 +109,4 @@ The system searches through a dataset of movies with titles and descriptions. Th
 - Automatically caches embeddings to `cache/movie_embeddings.npy` for fast loading
 - Supports text similarity and semantic understanding
 - Loads pre-computed embeddings when available, builds them on first run
+- Combines movie titles and descriptions for richer semantic understanding
