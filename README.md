@@ -54,6 +54,7 @@ The system works with two complementary search approaches:
 1. **Model Loading**: Loads a pre-trained sentence transformer model (all-MiniLM-L6-v2)
 2. **Text Embedding**: Converts search queries and movie descriptions into high-dimensional vectors
 3. **Similarity Matching**: Finds movies with similar semantic meaning using cosine similarity
+4. **Optional Chunking**: Quickly split long text into fixed-size word chunks for inspection/debugging
 
 ## Quick Start
 
@@ -69,6 +70,7 @@ python cli/keyword_search_cli.py bm25search "romantic comedy" --limit 10
 python cli/semantic_search_cli.py verify  # Verify model is loaded
 python cli/semantic_search_cli.py verify_embeddings  # Verify embeddings are loaded
 python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search movies semantically
+python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk-size 200  # Chunk helper
 ```
 
 ## Available Commands
@@ -89,6 +91,7 @@ python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search m
 - `search <query>` - Search for movies using semantic similarity
 - `embed_text <text>` - Generate and display text embeddings (debugging)
 - `embedquery <query>` - Generate and display query embeddings (debugging)
+- `chunk <text> [--chunk-size <int>]` - Split text into word chunks (default 200 words)
 
 ## Data
 
@@ -110,3 +113,5 @@ The system searches through a dataset of movies with titles and descriptions. Th
 - Supports text similarity and semantic understanding
 - Loads pre-computed embeddings when available, builds them on first run
 - Combines movie titles and descriptions for richer semantic understanding
+ - Defaults: CPU device; search limit `5` (see `cli/lib/search_utils.py`)
+ - Cache directory: `cache/` at project root; embeddings auto-rebuilt if dataset size changes
