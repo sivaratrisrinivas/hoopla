@@ -72,6 +72,8 @@ python cli/semantic_search_cli.py verify_embeddings  # Verify embeddings are loa
 python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search movies semantically
 # Chunk helper (supports word overlap between chunks)
 python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk-size 200 --overlap 20
+# Semantic (sentence) chunking with optional sentence overlap
+python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Sentence three." --max-chunk-size 2 --overlap 1
 ```
 
 ## Available Commands
@@ -93,6 +95,7 @@ python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk
 - `embed_text <text>` - Generate and display text embeddings (debugging)
 - `embedquery <query>` - Generate and display query embeddings (debugging)
 - `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
+- `semantic_chunk <text> [--max-chunk-size <int>] [--overlap <int>]` - Split text into sentence-based chunks (default max size 4 sentences, default overlap 0)
 
 ## Data
 
