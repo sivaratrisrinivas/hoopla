@@ -3,7 +3,7 @@
 import argparse
 
 from lib.search_utils import load_movies
-from lib.semantic_search import embed_text, verify_model, verify_embeddings, embed_query_text, semantic_search
+from lib.semantic_search import embed_text, verify_model, verify_embeddings, embed_query_text, semantic_search, chunk_text
 
 def main():
     parser = argparse.ArgumentParser(description="Semantic Search CLI")
@@ -22,6 +22,10 @@ def main():
     search_parser = subparsers.add_parser("search", help="Search for movies using semantic search")
     search_parser.add_argument("query", type=str, help="Search query")
     search_parser.add_argument("--limit", type=int, nargs="?", default=5, help="Number of results to return")
+
+    chunk_text_parser = subparsers.add_parser("chunk", help="Chunk a text")
+    chunk_text_parser.add_argument("text", type=str, help="Text to chunk")
+    chunk_text_parser.add_argument("--chunk-size", type=int, default=200, help="Chunk size (in words)")
     
     args = parser.parse_args()
 
@@ -36,6 +40,8 @@ def main():
             verify_embeddings()
         case "search":
             semantic_search(args.query, args.limit)
+        case "chunk":
+            chunk_text(args.text, args.chunk_size)
         case _:
             parser.print_help()
 
