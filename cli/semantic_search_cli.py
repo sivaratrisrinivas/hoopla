@@ -2,31 +2,56 @@
 
 import argparse
 
-from lib.search_utils import load_movies
-from lib.semantic_search import embed_text, verify_model, verify_embeddings, embed_query_text, semantic_search, chunk_text
+from lib.semantic_search import (
+    chunk_text,
+    embed_query_text,
+    embed_text,
+    overlap_chunking,
+    semantic_search,
+    verify_embeddings,
+    verify_model,
+)
 
-def main():
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Semantic Search CLI")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser("verify", help="Verify that the embedding model is loaded")
-    
-    single_embed_parser = subparsers.add_parser("embed_text", help="Embed a text")
+
+    single_embed_parser = subparsers.add_parser(
+        "embed_text", help="Generate an embedding for a single text"
+    )
     single_embed_parser.add_argument("text", type=str, help="Text to embed")
 
-    subparsers.add_parser("verify_embeddings", help="Verify the embeddings for movie dataset")
-    
-    query_embed_parser = subparsers.add_parser("embedquery", help="Embed a query text")
-    query_embed_parser.add_argument("query", type=str, help="Query to embed")
-    
-    search_parser = subparsers.add_parser("search", help="Search for movies using semantic search")
-    search_parser.add_argument("query", type=str, help="Search query")
-    search_parser.add_argument("--limit", type=int, nargs="?", default=5, help="Number of results to return")
+    subparsers.add_parser(
+        "verify_embeddings", help="Verify embeddings for the movie dataset"
+    )
 
-    chunk_text_parser = subparsers.add_parser("chunk", help="Chunk a text")
-    chunk_text_parser.add_argument("text", type=str, help="Text to chunk")
-    chunk_text_parser.add_argument("--chunk-size", type=int, default=200, help="Chunk size (in words)")
-    
+    embed_query_parser = subparsers.add_parser(
+        "embedquery", help="Generate an embedding for a search query"
+    )
+    embed_query_parser.add_argument("query", type=str, help="Query to embed")
+
+    search_parser = subparsers.add_parser(
+        "search", help="Search for movies using semantic search"
+    )
+    search_parser.add_argument("query", type=str, help="Search query")
+    search_parser.add_argument(
+        "--limit", type=int, default=5, help="Number of results to return"
+    )
+
+    chunk_parser = subparsers.add_parser(
+        "chunk", help="Split text into fixed-size chunks"
+    )
+    chunk_parser.add_argument("text", type=str, help="Text to chunk")
+    chunk_parser.add_argument(
+        "--chunk-size", type=int, default=200, help="Size of each chunk in words"
+    )
+    chunk_parser.add_argument(
+        "--overlap", type=int, default=0, help="Number of words to overlap between chunks"
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -34,16 +59,19 @@ def main():
             verify_model()
         case "embed_text":
             embed_text(args.text)
-        case "embedquery":
-            embed_query_text(args.query)
         case "verify_embeddings":
             verify_embeddings()
+        case "embedquery":
+            embed_query_text(args.query)
         case "search":
             semantic_search(args.query, args.limit)
         case "chunk":
-            chunk_text(args.text, args.chunk_size)
+            chunk_text(args.text, args.chunk_size, args.overlap)
+        case "overlap":
+            overlap_chunking(args.chunks, args.overlap)
         case _:
             parser.print_help()
+
 
 if __name__ == "__main__":
     main()
