@@ -70,7 +70,8 @@ python cli/keyword_search_cli.py bm25search "romantic comedy" --limit 10
 python cli/semantic_search_cli.py verify  # Verify model is loaded
 python cli/semantic_search_cli.py verify_embeddings  # Verify embeddings are loaded
 python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search movies semantically
-python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk-size 200  # Chunk helper
+# Chunk helper (supports word overlap between chunks)
+python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk-size 200 --overlap 20
 ```
 
 ## Available Commands
@@ -91,7 +92,7 @@ python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk
 - `search <query>` - Search for movies using semantic similarity
 - `embed_text <text>` - Generate and display text embeddings (debugging)
 - `embedquery <query>` - Generate and display query embeddings (debugging)
-- `chunk <text> [--chunk-size <int>]` - Split text into word chunks (default 200 words)
+- `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
 
 ## Data
 
