@@ -6,7 +6,6 @@ from lib.semantic_search import (
     chunk_text,
     embed_query_text,
     embed_text,
-    overlap_chunking,
     semantic_search,
     verify_embeddings,
     verify_model,
@@ -67,8 +66,6 @@ def main() -> None:
             semantic_search(args.query, args.limit)
         case "chunk":
             chunk_text(args.text, args.chunk_size, args.overlap)
-        case "overlap":
-            overlap_chunking(args.chunks, args.overlap)
         case _:
             parser.print_help()
 

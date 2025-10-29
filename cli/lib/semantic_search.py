@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from .search_utils import CACHE_DIR, DEFAULT_SEARCH_LIMIT, DEFAULT_CHUNK_SIZE, DEFAULT_OVERLAP, load_movies
+from .search_utils import CACHE_DIR, DEFAULT_SEARCH_LIMIT, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP, load_movies
 
 from sentence_transformers import SentenceTransformer
 
@@ -135,54 +135,21 @@ def semantic_search(query, limit = DEFAULT_SEARCH_LIMIT):
         print()
 
 
-def fixed_size_chunking(text: str, chunk_size: int = DEFAULT_CHUNK_SIZE) -> list[str]:
+def fixed_size_chunking(text: str, chunk_size: int = DEFAULT_CHUNK_SIZE, overlap: int = DEFAULT_CHUNK_OVERLAP) -> list[str]:
     words = text.split()
     chunks = []
-
+    n_words = len(words)
     i = 0
-    while i < len(words):
+    while i < n_words - overlap:
         chunk_words = words[i : i + chunk_size]
-        if not chunk_words:
-            break
         chunks.append(" ".join(chunk_words))
-        i += chunk_size
+        i += chunk_size - overlap
     return chunks
 
 
 
-def chunk_text(text: str, chunk_size: int = DEFAULT_CHUNK_SIZE, overlap: int = DEFAULT_OVERLAP):
-    words = text.split()
-
-    # Normalize params
-    if chunk_size <= 0:
-        chunk_size = 1
-    if overlap < 0:
-        overlap = 0
-    if overlap >= chunk_size:
-        overlap = max(0, chunk_size - 1)
-
-    step = chunk_size - overlap if overlap < chunk_size else 1
-
-    chunks: list[str] = []
-    i = 0
-    while i < len(words):
-        chunk_words = words[i : i + chunk_size]
-        if not chunk_words:
-            break
-        chunks.append(" ".join(chunk_words))
-        if i + chunk_size >= len(words):
-            break
-        i += step
-
+def chunk_text(text: str, chunk_size: int = DEFAULT_CHUNK_SIZE, overlap: int = DEFAULT_CHUNK_OVERLAP):
+    chunks = fixed_size_chunking(text, chunk_size, overlap)
     print(f"Chunking {len(text)} characters")
-    for idx, chunk in enumerate(chunks, 1):
-        print(f"{idx}. {chunk}")
-
-    if overlap > 0:
-        print("Overlapping chunks")
-        for idx, chunk in enumerate(chunks, 1):
-            print(f"{idx}. {chunk}")
-
-def overlap_chunking(chunks: list[str], overlap: int = DEFAULT_OVERLAP) -> list[str]:
-    # Deprecated: kept for API compatibility; now handled directly in chunk_text
-    return chunks
+    for i, chunk in enumerate(chunks):
+        print(f"{i + 1}. {chunk}")
