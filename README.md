@@ -97,6 +97,10 @@ python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Se
 - `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
 - `semantic_chunk <text> [--max-chunk-size <int>] [--overlap <int>]` - Split text into sentence-based chunks (default max size 4 sentences, default overlap 0)
 
+### Chunking utilities
+- **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
+- **Sentence chunks**: `semantic_chunk` splits on sentence boundaries; `--overlap` is in sentences
+
 ## Data
 
 The system searches through a dataset of movies with titles and descriptions. The index and embeddings are cached for fast repeated searches.
@@ -119,3 +123,4 @@ The system searches through a dataset of movies with titles and descriptions. Th
 - Combines movie titles and descriptions for richer semantic understanding
  - Defaults: CPU device; search limit `5` (see `cli/lib/search_utils.py`)
  - Cache directory: `cache/` at project root; embeddings auto-rebuilt if dataset size changes
+ - Chunking defaults: `DEFAULT_CHUNK_SIZE=200`, `DEFAULT_CHUNK_OVERLAP=0`, `DEFAULT_MAX_CHUNK_SIZE=4`
