@@ -3,6 +3,10 @@ import os
 import re
 
 import numpy as np
+
+# Force CPU to avoid CUDA initialization on unsupported GPUs which can crash
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
+
 from sentence_transformers import SentenceTransformer
 
 from .search_utils import (
@@ -12,14 +16,16 @@ from .search_utils import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_SEARCH_LIMIT,
     DEFAULT_SEMANTIC_CHUNK_SIZE,
+    SCORE_PRECISION,
     MOVIE_EMBEDDINGS_PATH,
     load_movies,
 )
 
 
 class SemanticSearch:
-    def __init__(self, model_name="all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer(model_name)
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
+        # Initialize model on CPU explicitly for portability
+        self.model = SentenceTransformer(model_name, device="cpu")
         self.embeddings = None
         self.documents = None
         self.document_map = {}
@@ -45,8 +51,9 @@ class SemanticSearch:
     def load_or_create_embeddings(self, documents):
         self.documents = documents
         self.document_map = {}
-        for doc in documents:
-            self.document_map[doc["id"]] = doc
+        for idx, doc in enumerate(documents):
+            # Map by enumerate index to align with chunk metadata movie_idx
+            self.document_map[idx] = doc
 
         if os.path.exists(MOVIE_EMBEDDINGS_PATH):
             self.embeddings = np.load(MOVIE_EMBEDDINGS_PATH)
@@ -213,8 +220,9 @@ class ChunkedSemanticSearch(SemanticSearch):
     def build_chunk_embeddings(self, documents: list[dict]) -> np.ndarray:
         self.documents = documents
         self.document_map = {}
-        for doc in documents:
-            self.document_map[doc["id"]] = doc
+        for idx, doc in enumerate(documents):
+            # Map by enumerate index to align with chunk metadata movie_idx
+            self.document_map[idx] = doc
 
         all_chunks = []
         chunk_metadata = []
@@ -251,8 +259,9 @@ class ChunkedSemanticSearch(SemanticSearch):
     def load_or_create_chunk_embeddings(self, documents: list[dict]) -> np.ndarray:
         self.documents = documents
         self.document_map = {}
-        for doc in documents:
-            self.document_map[doc["id"]] = doc
+        for idx, doc in enumerate(documents):
+            # Map by enumerate index to align with chunk metadata movie_idx
+            self.document_map[idx] = doc
 
         if os.path.exists(CHUNK_EMBEDDINGS_PATH) and os.path.exists(
             CHUNK_METADATA_PATH
@@ -265,6 +274,50 @@ class ChunkedSemanticSearch(SemanticSearch):
 
         return self.build_chunk_embeddings(documents)
 
+    def search_chunks(self, query: str, limit: int = 10):
+        query_embedding = self.generate_embedding(query)
+        similarities = []
+        for i, chunk_embedding in enumerate(self.chunk_embeddings):
+            similarity = cosine_similarity(query_embedding, chunk_embedding)
+            similarities.append({
+                "chunk_idx": self.chunk_metadata[i]["chunk_idx"],
+                "movie_idx": self.chunk_metadata[i]["movie_idx"],
+                "score": similarity,
+            })
+        movie_results = {}
+        for chunk_score in similarities:
+            movie_idx = chunk_score["movie_idx"]
+            score = chunk_score["score"]
+            if movie_idx not in movie_results or score > movie_results[movie_idx]:
+                movie_results[movie_idx] = score
+        
+        sorted_movie_results = sorted(movie_results.items(), key=lambda x: x[1], reverse=True)
+        
+        results = []
+        for movie_idx, score in sorted_movie_results[:limit]:
+            doc = self.document_map.get(movie_idx)
+            if not doc:
+                continue
+            doc_id = doc.get("id", "")
+            title = doc.get("title", "")
+            document = doc.get("description", "")[:100]
+            metadata = {k: v for k, v in doc.items() if k not in ["id", "title", "description"]}
+            results.append({
+                "id": doc_id,
+                "title": title,
+                "document": document[:100],
+                "score": round(score, SCORE_PRECISION),
+                "metadata": metadata or {}
+            })
+        return results
+
+
+def semantic_search_chunks(query: str, limit: int = 5):
+    movies = load_movies()
+    searcher = ChunkedSemanticSearch()
+    searcher.load_or_create_chunk_embeddings(movies)
+    results = searcher.search_chunks(query, limit)
+    return results
 
 def embed_chunks_command() -> np.ndarray:
     movies = load_movies()

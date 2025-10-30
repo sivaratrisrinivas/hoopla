@@ -75,6 +75,10 @@ python cli/semantic_search_cli.py search "space adventure" --limit 5  # Search m
 python cli/semantic_search_cli.py chunk "Long text you want to split..." --chunk-size 200 --overlap 20
 # Semantic (sentence) chunking with optional sentence overlap
 python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Sentence three." --max-chunk-size 2 --overlap 1
+
+# Precompute and use chunked semantic search (sentence-level)
+python cli/semantic_search_cli.py embed_chunks
+python cli/semantic_search_cli.py search_chunked "superhero action movie" --limit 10
 ```
 
 ## Available Commands
@@ -96,6 +100,7 @@ python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Se
 - `embed_text <text>` - Generate and display text embeddings (debugging)
 - `embedquery <query>` - Generate and display query embeddings (debugging)
 - `embed_chunks` - Generate and cache sentence-chunk embeddings for all movies
+- `search_chunked <query> [--limit <int>]` - Search using chunked embeddings aggregated to movie level
 - `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
 - `semantic_chunk <text> [--max-chunk-size <int>] [--overlap <int>]` - Split text into sentence-based chunks (default max size 4 sentences, default overlap 0)
 
@@ -126,6 +131,7 @@ The system searches through a dataset of movies with titles and descriptions. Th
  - Defaults: CPU device; search limit `5` (see `cli/lib/search_utils.py`)
  - Cache directory: `cache/` at project root; embeddings auto-rebuilt if dataset size changes
  - Chunking defaults: `DEFAULT_CHUNK_SIZE=200`, `DEFAULT_CHUNK_OVERLAP=1`, `DEFAULT_SEMANTIC_CHUNK_SIZE=4`
+ - Chunked search: computes cosine similarity per chunk, keeps best chunk score per movie, sorts desc, returns top `--limit`. Caches chunk vectors at `cache/chunk_embeddings.npy` and metadata at `cache/chunk_metadata.json`.
 
 ### Precomputing chunked embeddings
 - Run to create sentence-chunk embeddings and metadata cache:
@@ -133,6 +139,14 @@ The system searches through a dataset of movies with titles and descriptions. Th
 ```bash
 python cli/semantic_search_cli.py embed_chunks
 # Expected output example: "Generated 72909 chunked embeddings"
+```
+
+### Chunked semantic search output format
+Results are printed as:
+
+```
+1. The Incredibles (score: 0.8123)
+   A family of undercover superheroes, while trying to live the quiet suburban life...
 ```
 
 ### GPU/CUDA
