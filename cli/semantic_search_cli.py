@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
+
+# Force CPU execution by hiding GPUs from PyTorch to avoid CUDA init/segfaults
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 
 from lib.semantic_search import (
     chunk_text,
@@ -10,6 +14,7 @@ from lib.semantic_search import (
     semantic_search,
     verify_embeddings,
     verify_model,
+    chunked_semantic_search,
 )
 
 
@@ -81,6 +86,12 @@ def main() -> None:
         help="Number of sentences to overlap between chunks",
     )
 
+    chunked_semantic_search_parser = subparsers.add_parser(
+        "embed_chunks",
+        help="Generate embeddings for chunks of movie descriptions",
+    )
+    # No arguments needed; this command only generates and caches chunk embeddings
+
     args = parser.parse_args()
 
     match args.command:
@@ -98,6 +109,8 @@ def main() -> None:
             chunk_text(args.text, args.chunk_size, args.overlap)
         case "semantic_chunk":
             semantic_chunk_text(args.text, args.max_chunk_size, args.overlap)
+        case "embed_chunks":
+            chunked_semantic_search()
         case _:
             parser.print_help()
 

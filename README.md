@@ -55,6 +55,7 @@ The system works with two complementary search approaches:
 2. **Text Embedding**: Converts search queries and movie descriptions into high-dimensional vectors
 3. **Similarity Matching**: Finds movies with similar semantic meaning using cosine similarity
 4. **Optional Chunking**: Quickly split long text into fixed-size word chunks for inspection/debugging
+5. **Chunked Embeddings**: Precompute sentence-chunk embeddings for the dataset for faster semantic ops
 
 ## Quick Start
 
@@ -94,6 +95,7 @@ python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Se
 - `search <query>` - Search for movies using semantic similarity
 - `embed_text <text>` - Generate and display text embeddings (debugging)
 - `embedquery <query>` - Generate and display query embeddings (debugging)
+- `embed_chunks` - Generate and cache sentence-chunk embeddings for all movies
 - `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
 - `semantic_chunk <text> [--max-chunk-size <int>] [--overlap <int>]` - Split text into sentence-based chunks (default max size 4 sentences, default overlap 0)
 
@@ -123,4 +125,15 @@ The system searches through a dataset of movies with titles and descriptions. Th
 - Combines movie titles and descriptions for richer semantic understanding
  - Defaults: CPU device; search limit `5` (see `cli/lib/search_utils.py`)
  - Cache directory: `cache/` at project root; embeddings auto-rebuilt if dataset size changes
- - Chunking defaults: `DEFAULT_CHUNK_SIZE=200`, `DEFAULT_CHUNK_OVERLAP=0`, `DEFAULT_MAX_CHUNK_SIZE=4`
+ - Chunking defaults: `DEFAULT_CHUNK_SIZE=200`, `DEFAULT_CHUNK_OVERLAP=1`, `DEFAULT_SEMANTIC_CHUNK_SIZE=4`
+
+### Precomputing chunked embeddings
+- Run to create sentence-chunk embeddings and metadata cache:
+
+```bash
+python cli/semantic_search_cli.py embed_chunks
+# Expected output example: "Generated 72909 chunked embeddings"
+```
+
+### GPU/CUDA
+- The CLI runs on CPU by default and avoids initializing CUDA to prevent GPU capability mismatches.
