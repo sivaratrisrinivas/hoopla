@@ -87,6 +87,9 @@ python cli/semantic_search_cli.py search_chunked "superhero action movie" --limi
 
 # Hybrid search (combines BM25 and semantic search)
 python cli/hybrid_search_cli.py hybrid_search "superhero action movie" --limit 10
+
+# Normalize scores using min-max normalization
+python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
 
 ## Available Commands
@@ -114,6 +117,7 @@ python cli/hybrid_search_cli.py hybrid_search "superhero action movie" --limit 1
 
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
+- `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
 - **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
@@ -174,6 +178,10 @@ Results are printed as:
 - Merges results from both approaches, sorts by score, and returns top `--limit` results
 - Requires both keyword index (run `keyword_search_cli.py build`) and semantic chunk embeddings (run `semantic_search_cli.py embed_chunks`)
 - Output format matches chunked semantic search with title, score, and description preview
+- **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
+  - If all scores are identical, returns all 1.0 values
+  - If no scores provided, prints nothing
+  - Example: `normalize 0.5 2.3 1.2 0.5 0.1` outputs normalized scores with 4 decimal places
 
 ### GPU/CUDA
 - The CLI runs on CPU by default and avoids initializing CUDA to prevent GPU capability mismatches.
