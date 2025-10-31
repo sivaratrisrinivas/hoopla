@@ -9,7 +9,7 @@ def main() -> None:
 
     normalize_parser = subparsers.add_parser(
         "normalize",
-        help="Normalize scores using min-max normalization",
+        help="Normalize list of scores using min-max normalization",
     )
     normalize_parser.add_argument(
         "scores",
