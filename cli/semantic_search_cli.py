@@ -83,6 +83,8 @@ def main() -> None:
         help="Number of sentences to overlap between chunks",
     )
 
+    
+
     subparsers.add_parser(
         "embed_chunks",
         help="Generate embeddings for chunked documents",

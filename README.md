@@ -107,6 +107,8 @@ python cli/semantic_search_cli.py search_chunked "superhero action movie" --limi
 ### Chunking utilities
 - **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
 - **Sentence chunks**: `semantic_chunk` splits on sentence boundaries; `--overlap` is in sentences
+  - Handles edge cases: strips whitespace from input and sentences, filters empty chunks, handles text without punctuation
+  - Test edge cases: `" Leading and trailing spaces. "`, `"Text without punctuation"`, `" "`, `""`
 
 ## Data
 
@@ -132,6 +134,7 @@ The system searches through a dataset of movies with titles and descriptions. Th
  - Cache directory: `cache/` at project root; embeddings auto-rebuilt if dataset size changes
  - Chunking defaults: `DEFAULT_CHUNK_SIZE=200`, `DEFAULT_CHUNK_OVERLAP=1`, `DEFAULT_SEMANTIC_CHUNK_SIZE=4`
  - Chunked search: computes cosine similarity per chunk, keeps best chunk score per movie, sorts desc, returns top `--limit`. Caches chunk vectors at `cache/chunk_embeddings.npy` and metadata at `cache/chunk_metadata.json`.
+ - Semantic chunking handles edge cases: strips leading/trailing whitespace, filters empty sentences and chunks, treats single non-punctuated sentences as complete chunks.
 
 ### Precomputing chunked embeddings
 - Run to create sentence-chunk embeddings and metadata cache:
@@ -140,6 +143,12 @@ The system searches through a dataset of movies with titles and descriptions. Th
 python cli/semantic_search_cli.py embed_chunks
 # Expected output example: "Generated 72909 chunked embeddings"
 ```
+
+**Note**: If you modify the chunking logic, delete the cache files to force a rebuild:
+```bash
+rm cache/chunk_embeddings.npy cache/chunk_metadata.json
+```
+Then run `embed_chunks` again to regenerate embeddings with the updated chunking.
 
 ### Chunked semantic search output format
 Results are printed as:
