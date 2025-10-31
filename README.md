@@ -43,7 +43,7 @@ Also ensure `data/stopwords.txt` exists with common stopwords (one per line).
 
 ## How
 
-The system works with two complementary search approaches:
+The system works with two complementary search approaches that can be combined:
 
 ### Keyword Search (BM25)
 1. **Index Building**: Processes all movie data and creates an inverted index (like a book's index, but for every word)
@@ -56,6 +56,11 @@ The system works with two complementary search approaches:
 3. **Similarity Matching**: Finds movies with similar semantic meaning using cosine similarity
 4. **Optional Chunking**: Quickly split long text into fixed-size word chunks for inspection/debugging
 5. **Chunked Embeddings**: Precompute sentence-chunk embeddings for the dataset for faster semantic ops
+
+### Hybrid Search
+1. **Dual Query**: Runs both BM25 and semantic search on the same query
+2. **Result Merging**: Combines results from both approaches into a single result set
+3. **Score-Based Ranking**: Sorts merged results by relevance score and returns top matches
 
 ## Quick Start
 
@@ -79,6 +84,9 @@ python cli/semantic_search_cli.py semantic_chunk "Sentence one. Sentence two. Se
 # Precompute and use chunked semantic search (sentence-level)
 python cli/semantic_search_cli.py embed_chunks
 python cli/semantic_search_cli.py search_chunked "superhero action movie" --limit 10
+
+# Hybrid search (combines BM25 and semantic search)
+python cli/hybrid_search_cli.py hybrid_search "superhero action movie" --limit 10
 ```
 
 ## Available Commands
@@ -103,6 +111,9 @@ python cli/semantic_search_cli.py search_chunked "superhero action movie" --limi
 - `search_chunked <query> [--limit <int>]` - Search using chunked embeddings aggregated to movie level
 - `chunk <text> [--chunk-size <int>] [--overlap <int>]` - Split text into word chunks (default size 200, default overlap 0)
 - `semantic_chunk <text> [--max-chunk-size <int>] [--overlap <int>]` - Split text into sentence-based chunks (default max size 4 sentences, default overlap 0)
+
+### Hybrid Search Commands
+- `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 
 ### Chunking utilities
 - **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
@@ -157,6 +168,12 @@ Results are printed as:
 1. The Incredibles (score: 0.8123)
    A family of undercover superheroes, while trying to live the quiet suburban life...
 ```
+
+### Hybrid Search
+- Combines BM25 keyword search and chunked semantic search results
+- Merges results from both approaches, sorts by score, and returns top `--limit` results
+- Requires both keyword index (run `keyword_search_cli.py build`) and semantic chunk embeddings (run `semantic_search_cli.py embed_chunks`)
+- Output format matches chunked semantic search with title, score, and description preview
 
 ### GPU/CUDA
 - The CLI runs on CPU by default and avoids initializing CUDA to prevent GPU capability mismatches.
