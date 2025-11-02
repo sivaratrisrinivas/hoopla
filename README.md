@@ -91,6 +91,9 @@ python cli/hybrid_search_cli.py hybrid_search "superhero action movie" --limit 1
 # Weighted hybrid search with configurable alpha (0.0 = pure semantic, 1.0 = pure BM25)
 python cli/hybrid_search_cli.py weighted-search "British Bear" --alpha 0.5 --limit 25
 
+# RRF (Reciprocal Rank Fusion) hybrid search with configurable k constant
+python cli/hybrid_search_cli.py rrf-search "British Bear" --k 60 --limit 25
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
@@ -121,6 +124,7 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
+- `rrf-search <query> [--k <int>] [--limit <int>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
@@ -188,6 +192,13 @@ Results are printed as:
   - Both BM25 and semantic scores are normalized to [0, 1] range before combination
   - Searches top 2500 results from each method, normalizes scores, combines, and returns top `--limit` results
   - Output format: prints movie titles only
+- **Reciprocal Rank Fusion (RRF)**: `rrf-search` command combines BM25 and semantic search results using rank-based fusion
+  - Formula: `rrf_score = 1 / (k + rank)` where `rank` is the position (1-indexed) in each result list
+  - `k` parameter controls the fusion constant (default 60); higher k values reduce the impact of rank differences
+  - Documents appearing in both result sets have their RRF scores summed
+  - Uses ranks (position) rather than normalized scores, making it robust to different score distributions
+  - Searches top `limit * 500` results from each method, calculates RRF scores, and returns top `--limit` results sorted by RRF score
+  - Output format: prints movie title, RRF score, and description preview
 - **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
   - If all scores are identical, returns all 1.0 values
   - If no scores provided, prints nothing
