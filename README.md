@@ -88,6 +88,9 @@ python cli/semantic_search_cli.py search_chunked "superhero action movie" --limi
 # Hybrid search (combines BM25 and semantic search)
 python cli/hybrid_search_cli.py hybrid_search "superhero action movie" --limit 10
 
+# Weighted hybrid search with configurable alpha (0.0 = pure semantic, 1.0 = pure BM25)
+python cli/hybrid_search_cli.py weighted-search "British Bear" --alpha 0.5 --limit 25
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
@@ -117,6 +120,7 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
+- `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
@@ -178,6 +182,12 @@ Results are printed as:
 - Merges results from both approaches, sorts by score, and returns top `--limit` results
 - Requires both keyword index (run `keyword_search_cli.py build`) and semantic chunk embeddings (run `semantic_search_cli.py embed_chunks`)
 - Output format matches chunked semantic search with title, score, and description preview
+- **Weighted Hybrid Search**: `weighted-search` command combines normalized BM25 and semantic scores using weighted linear combination
+  - Formula: `hybrid_score = alpha * normalized_bm25 + (1 - alpha) * normalized_semantic`
+  - `alpha` parameter controls weighting: 0.0 = pure semantic search, 1.0 = pure BM25, 0.5 = equal weighting (default)
+  - Both BM25 and semantic scores are normalized to [0, 1] range before combination
+  - Searches top 2500 results from each method, normalizes scores, combines, and returns top `--limit` results
+  - Output format: prints movie titles only
 - **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
   - If all scores are identical, returns all 1.0 values
   - If no scores provided, prints nothing
