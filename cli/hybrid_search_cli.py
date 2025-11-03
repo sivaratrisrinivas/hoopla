@@ -1,11 +1,6 @@
 import argparse
-import os
-from dotenv import load_dotenv
-from google import genai
 
 from lib.hybrid_search import normalize_scores, weighted_search_command, rrf_search_command
-
-load_dotenv()
 
 
 def main() -> None:
@@ -81,46 +76,11 @@ def main() -> None:
                 print(f"   {res['document'][:100]}...")
                 print()
         case "rrf-search":
-            # INSERT_YOUR_CODE
-            enhanced_query = args.query
-            if getattr(args, "enhance", None) == "spell":
-                try:
-                    api_key = os.environ.get("GEMINI_API_KEY")
-                    if not api_key:
-                        raise ValueError("GEMINI_API_KEY not set in environment variables.")
-
-                    client = genai.Client(api_key=api_key)
-                    system_prompt = (
-                        f"Fix any spelling errors in this movie search query.\n\n"
-                        f"Only correct obvious typos. Don't change correctly spelled words.\n\n"
-                        f'Query: "{args.query}"\n\n'
-                        f"If no errors, return the original query.\n"
-                        f"Corrected:"
-                    )
-
-                    response = client.models.generate_content(
-                        model="gemini-2.0-flash-001",
-                        contents=system_prompt,
-                    )
-                    # Use stripped response for enhanced query
-                    enhanced_query_candidate = response.text.strip()
-                    # Gemini may echo the prompt, try to extract just the actual correction
-                    if enhanced_query_candidate.lower().startswith("corrected:"):
-                        enhanced_query_candidate = enhanced_query_candidate[len("corrected:"):].strip()
-                    
-                    # Strip surrounding quotes if present
-                    if enhanced_query_candidate.startswith('"') and enhanced_query_candidate.endswith('"'):
-                        enhanced_query_candidate = enhanced_query_candidate[1:-1]
-                    elif enhanced_query_candidate.startswith("'") and enhanced_query_candidate.endswith("'"):
-                        enhanced_query_candidate = enhanced_query_candidate[1:-1]
-
-                    enhanced_query = enhanced_query_candidate
-                    print(f"Enhanced query ({args.enhance}): '{args.query}' -> '{enhanced_query}'\n")
-                except Exception as e:
-                    print(f"[Warning] Query enhancement failed: {e}")
-                    enhanced_query = args.query
-            result = rrf_search_command(enhanced_query, args.k, args.limit)
-
+            result = rrf_search_command(args.query, args.k, args.enhance, args.limit)
+            if result["enhanced_query"]:
+                print(
+                    f"Enhanced query ({result['enhance_method']}): '{result['original_query']}' -> '{result['enhanced_query']}'\n"
+                )
             print(
                 f"RRF Hybrid Search Results for '{result['query']}' (k={result['k']}):"
             )
