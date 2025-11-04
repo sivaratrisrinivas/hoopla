@@ -45,7 +45,7 @@ def main() -> None:
     rrf_parser.add_argument(
     "--enhance",
     type=str,
-    choices=["spell"],
+    choices=["spell", "rewrite"],
     help="Query enhancement method",
     )
 
@@ -90,6 +90,7 @@ def main() -> None:
                 print(f"   RRF Score: {res.get('score', 0):.3f}")
                 print(f"   {res['document'][:100]}...")
                 print()
+            
         case _:
             parser.print_help()
 

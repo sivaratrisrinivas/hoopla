@@ -5,3 +5,4 @@ uv.lock
 cli/lib/__pycache__
 cache/
 .env
+RULES.md

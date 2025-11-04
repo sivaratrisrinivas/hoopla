@@ -23,7 +23,7 @@ uv sync
 # Or using pip
 pip install -e .
 
-# Optional: For query enhancement (spell correction), create a .env file with:
+# Optional: For query enhancement (spell correction and query rewriting), create a .env file with:
 # GEMINI_API_KEY=your_api_key_here
 ```
 
@@ -100,6 +100,9 @@ python cli/hybrid_search_cli.py rrf-search "British Bear" --k 60 --limit 25
 # RRF search with query enhancement (spell correction)
 python cli/hybrid_search_cli.py rrf-search "briish bear" --enhance spell
 
+# RRF search with query enhancement (query rewriting)
+python cli/hybrid_search_cli.py rrf-search "bear movie that gives me the lulz" --enhance rewrite
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
@@ -130,7 +133,7 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
-- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction using Gemini API
+- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting using Gemini API
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
@@ -205,9 +208,10 @@ Results are printed as:
   - Uses ranks (position) rather than normalized scores, making it robust to different score distributions
   - Searches top `limit * 500` results from each method, calculates RRF scores, and returns top `--limit` results sorted by RRF score
   - Output format: prints movie title, RRF score, and description preview
-  - **Query Enhancement**: `--enhance spell` option enables automatic spell correction using Google's Gemini API
+  - **Query Enhancement**: `--enhance` option enables automatic query improvement using Google's Gemini API
+    - `--enhance spell`: Corrects spelling errors in search queries (e.g., "briish bear" → "british bear")
+    - `--enhance rewrite`: Rewrites vague queries to be more searchable and specific (e.g., "bear movie that gives me the lulz" → "Comedy bear movie Ted style")
     - Requires `GEMINI_API_KEY` in `.env` file or environment variables
-    - Corrects typos in search queries before performing the search (e.g., "briish bear" → "british bear")
     - Falls back to original query if enhancement fails or API key is not set
 - **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
   - If all scores are identical, returns all 1.0 values
