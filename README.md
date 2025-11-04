@@ -103,6 +103,9 @@ python cli/hybrid_search_cli.py rrf-search "briish bear" --enhance spell
 # RRF search with query enhancement (query rewriting)
 python cli/hybrid_search_cli.py rrf-search "bear movie that gives me the lulz" --enhance rewrite
 
+# RRF search with query enhancement (query expansion)
+python cli/hybrid_search_cli.py rrf-search "scary bear movie" --enhance expand
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
@@ -133,7 +136,7 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
-- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting using Gemini API
+- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
@@ -211,6 +214,7 @@ Results are printed as:
   - **Query Enhancement**: `--enhance` option enables automatic query improvement using Google's Gemini API
     - `--enhance spell`: Corrects spelling errors in search queries (e.g., "briish bear" → "british bear")
     - `--enhance rewrite`: Rewrites vague queries to be more searchable and specific (e.g., "bear movie that gives me the lulz" → "Comedy bear movie Ted style")
+    - `--enhance expand`: Expands queries with synonyms and related terms to improve search coverage (e.g., "scary bear movie" → "scary horror grizzly bear movie terrifying film")
     - Requires `GEMINI_API_KEY` in `.env` file or environment variables
     - Falls back to original query if enhancement fails or API key is not set
 - **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
