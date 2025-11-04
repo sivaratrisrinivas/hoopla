@@ -212,15 +212,15 @@ Results are printed as:
   - `k` parameter controls the fusion constant (default 60); higher k values reduce the impact of rank differences
   - Documents appearing in both result sets have their RRF scores summed
   - Uses ranks (position) rather than normalized scores, making it robust to different score distributions
-  - Searches top `limit * 500` results from each method, calculates RRF scores, and returns top `--limit` results sorted by RRF score
+  - By default, searches top `limit` results from each method, calculates RRF scores, and returns top `--limit` results sorted by RRF score
   - Output format: prints movie title, RRF score, BM25 rank, semantic rank, and description preview
   - **Reranking**: `--rerank-method individual` option uses LLM to rerank results for improved relevance
-    - When enabled, gathers `limit * 5` results from each search method (instead of `limit * 500`)
+    - When enabled, gathers `limit * 5` results from each search method (instead of just `limit`)
     - LLM scores each result on a 0-10 scale based on query relevance
-    - Results are sorted by LLM rerank score (with RRF score as tiebreaker) and top `limit` are returned
+    - Results are sorted by LLM rerank score (individual_score) in descending order and top `limit` are returned
     - Requires `GEMINI_API_KEY` in `.env` file or environment variables
     - Includes 3-second delay between LLM calls to respect rate limits
-    - Output shows rerank score (0-10) alongside RRF score for each result
+    - Output shows individual score (0-10) alongside RRF score for each result
   - **Query Enhancement**: `--enhance` option enables automatic query improvement using Google's Gemini API
     - `--enhance spell`: Corrects spelling errors in search queries (e.g., "briish bear" → "british bear")
     - `--enhance rewrite`: Rewrites vague queries to be more searchable and specific (e.g., "bear movie that gives me the lulz" → "Comedy bear movie Ted style")

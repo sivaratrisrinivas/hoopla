@@ -1,6 +1,10 @@
 import argparse
 
-from lib.hybrid_search import normalize_scores, weighted_search_command, rrf_search_command
+from lib.hybrid_search import (
+    normalize_scores,
+    rrf_search_command,
+    weighted_search_command,
+)
 
 
 def main() -> None:
@@ -8,14 +12,10 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     normalize_parser = subparsers.add_parser(
-        "normalize",
-        help="Normalize list of scores using min-max normalization",
+        "normalize", help="Normalize a list of scores"
     )
     normalize_parser.add_argument(
-        "scores",
-        type=float,
-        nargs="+",
-        help="List of scores to normalize",
+        "scores", nargs="+", type=float, help="List of scores to normalize"
     )
 
     weighted_parser = subparsers.add_parser(
@@ -33,27 +33,29 @@ def main() -> None:
     )
 
     rrf_parser = subparsers.add_parser(
-        "rrf-search", help="Perform RRF hybrid search"
+        "rrf-search", help="Perform Reciprocal Rank Fusion search"
     )
     rrf_parser.add_argument("query", type=str, help="Search query")
     rrf_parser.add_argument(
-        "--k", type=int, default=60, help="Constant for RRF (default=60)"
+        "-k",
+        type=int,
+        default=60,
+        help="RRF k parameter controlling weight distribution (default=60)",
     )
     rrf_parser.add_argument(
-        "--limit", type=int, default=5, help="Number of results to return (default=5)"
+        "--enhance",
+        type=str,
+        choices=["spell", "expand", "rewrite"],
+        help="Query enhancement method",
     )
-    rrf_parser.add_argument(
-    "--enhance",
-    type=str,
-    choices=["spell", "rewrite", "expand"],
-    help="Query enhancement method",
-    )
-
     rrf_parser.add_argument(
         "--rerank-method",
         type=str,
         choices=["individual"],
-        help="Rerank method",
+        help="Reranking method",
+    )
+    rrf_parser.add_argument(
+        "--limit", type=int, default=5, help="Number of results to return (default=5)"
     )
 
     args = parser.parse_args()
@@ -83,40 +85,41 @@ def main() -> None:
                 print(f"   {res['document'][:100]}...")
                 print()
         case "rrf-search":
-            result = rrf_search_command(args.query, args.k, args.enhance, args.limit, args.rerank_method)
+            result = rrf_search_command(
+                args.query, args.k, args.enhance, args.rerank_method, args.limit
+            )
+
             if result["enhanced_query"]:
                 print(
                     f"Enhanced query ({result['enhance_method']}): '{result['original_query']}' -> '{result['enhanced_query']}'\n"
                 )
-            
-            if result.get("rerank_method") == "individual":
-                print(f"Reranking top {args.limit} results using individual method...")
-            
+
+            if result["reranked"]:
+                print(
+                    f"Reranking top {len(result['results'])} results using {result['rerank_method']} method...\n"
+                )
+
             print(
                 f"Reciprocal Rank Fusion Results for '{result['query']}' (k={result['k']}):"
             )
+
             for i, res in enumerate(result["results"], 1):
                 print(f"{i}. {res['title']}")
-                
-                # Show rerank score if available
-                if "rerank_score" in res:
-                    print(f"   Rerank Score: {res['rerank_score']:.3f}/10")
-                
-                # Show RRF score
+                if "individual_score" in res:
+                    print(f"   Rerank Score: {res.get('individual_score', 0):.3f}/10")
+                if "batch_rank" in res:
+                    print(f"   Rerank Rank: {res.get('batch_rank', 0)}")
                 print(f"   RRF Score: {res.get('score', 0):.3f}")
-                
-                # Show BM25 and Semantic ranks if available
                 metadata = res.get("metadata", {})
-                bm25_rank = metadata.get("bm25_rank")
-                semantic_rank = metadata.get("semantic_rank")
-                if bm25_rank is not None or semantic_rank is not None:
-                    bm25_str = str(bm25_rank) if bm25_rank is not None else "N/A"
-                    semantic_str = str(semantic_rank) if semantic_rank is not None else "N/A"
-                    print(f"   BM25 Rank: {bm25_str}, Semantic Rank: {semantic_str}")
-                
+                ranks = []
+                if metadata.get("bm25_rank"):
+                    ranks.append(f"BM25 Rank: {metadata['bm25_rank']}")
+                if metadata.get("semantic_rank"):
+                    ranks.append(f"Semantic Rank: {metadata['semantic_rank']}")
+                if ranks:
+                    print(f"   {', '.join(ranks)}")
                 print(f"   {res['document'][:100]}...")
                 print()
-            
         case _:
             parser.print_help()
 
