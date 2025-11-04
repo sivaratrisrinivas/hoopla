@@ -49,6 +49,13 @@ def main() -> None:
     help="Query enhancement method",
     )
 
+    rrf_parser.add_argument(
+        "--rerank-method",
+        type=str,
+        choices=["individual"],
+        help="Rerank method",
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -76,18 +83,37 @@ def main() -> None:
                 print(f"   {res['document'][:100]}...")
                 print()
         case "rrf-search":
-            result = rrf_search_command(args.query, args.k, args.enhance, args.limit)
+            result = rrf_search_command(args.query, args.k, args.enhance, args.limit, args.rerank_method)
             if result["enhanced_query"]:
                 print(
                     f"Enhanced query ({result['enhance_method']}): '{result['original_query']}' -> '{result['enhanced_query']}'\n"
                 )
+            
+            if result.get("rerank_method") == "individual":
+                print(f"Reranking top {args.limit} results using individual method...")
+            
             print(
-                f"RRF Hybrid Search Results for '{result['query']}' (k={result['k']}):"
+                f"Reciprocal Rank Fusion Results for '{result['query']}' (k={result['k']}):"
             )
-            print(f"  K {result['k']}: {int(result['k'] * 100)}% BM25, {int((1 - result['k']) * 100)}% Semantic")
             for i, res in enumerate(result["results"], 1):
                 print(f"{i}. {res['title']}")
+                
+                # Show rerank score if available
+                if "rerank_score" in res:
+                    print(f"   Rerank Score: {res['rerank_score']:.3f}/10")
+                
+                # Show RRF score
                 print(f"   RRF Score: {res.get('score', 0):.3f}")
+                
+                # Show BM25 and Semantic ranks if available
+                metadata = res.get("metadata", {})
+                bm25_rank = metadata.get("bm25_rank")
+                semantic_rank = metadata.get("semantic_rank")
+                if bm25_rank is not None or semantic_rank is not None:
+                    bm25_str = str(bm25_rank) if bm25_rank is not None else "N/A"
+                    semantic_str = str(semantic_rank) if semantic_rank is not None else "N/A"
+                    print(f"   BM25 Rank: {bm25_str}, Semantic Rank: {semantic_str}")
+                
                 print(f"   {res['document'][:100]}...")
                 print()
             

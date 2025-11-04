@@ -1,4 +1,6 @@
 import os
+import re
+import time
 from typing import Optional
 
 from .keyword_search import InvertedIndex
@@ -10,6 +12,15 @@ from .search_utils import (
     load_movies,
     format_search_result,
 )
+
+# Import LLM client for reranking
+from dotenv import load_dotenv
+from google import genai
+
+load_dotenv()
+api_key = os.environ.get("GEMINI_API_KEY")
+llm_client = genai.Client(api_key=api_key) if api_key else None
+llm_model = "gemini-2.0-flash-001"
 
 class HybridSearch:
     def __init__(self, documents: list[dict]) -> None:
@@ -33,12 +44,12 @@ class HybridSearch:
         combined = combine_search_results(bm25_results, semantic_results, alpha)
         return combined[:limit]
 
-    def rrf_search(self, query: str, k: int, limit: int = 10) -> list[dict]:
-        bm25_results = self._bm25_search(query, limit * 500)
-        semantic_results = self.semantic_search.search_chunks(query, limit * 500)
+    def rrf_search(self, query: str, k: int, search_limit: int = 5000, return_limit: int = 10) -> list[dict]:
+        bm25_results = self._bm25_search(query, search_limit)
+        semantic_results = self.semantic_search.search_chunks(query, search_limit)
 
         combined = rrf_combine_search_results(bm25_results, semantic_results, k)
-        return combined[:limit]
+        return combined[:return_limit]
 
 
 def normalize_scores(scores: list[float]) -> list[float]:
@@ -214,8 +225,79 @@ def rrf_combine_search_results(
     
     return sorted(results, key=lambda x: x["score"], reverse=True) 
 
+
+def get_llm_rerank_score(query: str, doc: dict) -> float:
+    """
+    Get a rerank score (0-10) from LLM for a document given a query.
+    
+    Args:
+        query: Search query
+        doc: Document dictionary with 'title' and 'document' fields
+    
+    Returns:
+        Float score between 0 and 10, or 0.0 if LLM call fails
+    """
+    if not llm_client:
+        return 0.0
+    
+    prompt = f"""Rate how well this movie matches the search query.
+
+Query: "{query}"
+
+Movie: {doc.get("title", "")} - {doc.get("document", "")}
+
+Consider:
+- Direct relevance to query
+- User intent (what they're looking for)
+- Content appropriateness
+
+Rate 0-10 (10 = perfect match).
+Give me ONLY the number in your response, no other text or explanation.
+
+Score:"""
+    
+    try:
+        response = llm_client.models.generate_content(
+            model=llm_model,
+            contents=prompt,
+        )
+        score_text = response.text.strip()
+        # Extract numeric value from response
+        match = re.search(r'\d+\.?\d*', score_text)
+        if match:
+            score = float(match.group())
+            # Clamp to 0-10 range
+            return max(0.0, min(10.0, score))
+        return 0.0
+    except Exception:
+        return 0.0
+
+
+def rerank_results_individual(query: str, results: list[dict], sleep_seconds: float = 3.0) -> list[dict]:
+    """
+    Rerank results using individual LLM scoring for each document.
+    
+    Args:
+        query: Search query
+        results: List of search results to rerank
+        sleep_seconds: Seconds to sleep between LLM calls
+    
+    Returns:
+        List of results sorted by LLM score in descending order, with 'rerank_score' added
+    """
+    if not llm_client:
+        return results
+    
+    for result in results:
+        result["rerank_score"] = get_llm_rerank_score(query, result)
+        time.sleep(sleep_seconds)
+    
+    # Sort by rerank_score descending, then by original RRF score as tiebreaker
+    return sorted(results, key=lambda x: (x.get("rerank_score", 0.0), x.get("score", 0.0)), reverse=True)
+
+
 def rrf_search_command(
-    query: str, k: int = 60, enhance: Optional[str] = None, limit: int = DEFAULT_SEARCH_LIMIT
+    query: str, k: int = 60, enhance: Optional[str] = None, limit: int = DEFAULT_SEARCH_LIMIT, rerank_method: Optional[str] = None
 ) -> dict:
     movies = load_movies()
     searcher = HybridSearch(movies)
@@ -226,8 +308,18 @@ def rrf_search_command(
         enhanced_query = enhance_query(query, method=enhance)
         query = enhanced_query
 
-    search_limit = limit
-    results = searcher.rrf_search(query, k, search_limit)
+    # If rerank_method is "individual", gather 5x more results for reranking
+    if rerank_method == "individual":
+        search_limit = limit * 5
+        # Get 5x limit results for reranking
+        results = searcher.rrf_search(query, k, search_limit, limit * 5)
+        # Rerank using LLM
+        results = rerank_results_individual(query, results, sleep_seconds=3.0)
+        # Truncate to limit after reranking
+        results = results[:limit]
+    else:
+        search_limit = limit * 500
+        results = searcher.rrf_search(query, k, search_limit, limit)
 
     return {
         "original_query": original_query,
@@ -236,4 +328,5 @@ def rrf_search_command(
         "query": query,
         "k": k,
         "results": results,
+        "rerank_method": rerank_method,
     }
