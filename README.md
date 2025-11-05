@@ -109,6 +109,9 @@ python cli/hybrid_search_cli.py rrf-search "scary bear movie" --enhance expand
 # RRF search with reranking (uses LLM to score and rerank results)
 python cli/hybrid_search_cli.py rrf-search "action movie" --rerank-method individual --limit 5
 
+# RRF search with batch reranking (faster, single LLM call)
+python cli/hybrid_search_cli.py rrf-search "family movie about bears in the woods" --rerank-method batch --limit 3
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ```
@@ -139,7 +142,7 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
-- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` uses LLM to rerank results for improved relevance
+- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` or `--rerank-method batch` uses LLM to rerank results for improved relevance (batch is faster and uses fewer API calls)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Chunking utilities
@@ -214,13 +217,19 @@ Results are printed as:
   - Uses ranks (position) rather than normalized scores, making it robust to different score distributions
   - By default, searches top `limit` results from each method, calculates RRF scores, and returns top `--limit` results sorted by RRF score
   - Output format: prints movie title, RRF score, BM25 rank, semantic rank, and description preview
-  - **Reranking**: `--rerank-method individual` option uses LLM to rerank results for improved relevance
-    - When enabled, gathers `limit * 5` results from each search method (instead of just `limit`)
-    - LLM scores each result on a 0-10 scale based on query relevance
-    - Results are sorted by LLM rerank score (individual_score) in descending order and top `limit` are returned
-    - Requires `GEMINI_API_KEY` in `.env` file or environment variables
-    - Includes 3-second delay between LLM calls to respect rate limits
-    - Output shows individual score (0-10) alongside RRF score for each result
+  - **Reranking**: `--rerank-method` option uses LLM to rerank results for improved relevance. Two methods available:
+    - `individual`: Scores each result individually on a 0-10 scale (slower, more API calls)
+      - When enabled, gathers `limit * 5` results from each search method (instead of just `limit`)
+      - LLM scores each result individually on a 0-10 scale based on query relevance
+      - Results are sorted by LLM rerank score (individual_score) in descending order and top `limit` are returned
+      - Includes 3-second delay between LLM calls to respect rate limits
+      - Output shows individual score (0-10) alongside RRF score for each result
+    - `batch`: Reranks all results in a single LLM call (faster, fewer API calls, recommended)
+      - When enabled, gathers `limit * 5` results from each search method (instead of just `limit`)
+      - LLM receives all documents in a single prompt and returns a JSON list of IDs ranked by relevance
+      - Results are sorted by LLM's ranking order and top `limit` are returned
+      - Output shows rerank rank (1-indexed position from LLM ranking) alongside RRF score for each result
+    - Both methods require `GEMINI_API_KEY` in `.env` file or environment variables
   - **Query Enhancement**: `--enhance` option enables automatic query improvement using Google's Gemini API
     - `--enhance spell`: Corrects spelling errors in search queries (e.g., "briish bear" → "british bear")
     - `--enhance rewrite`: Rewrites vague queries to be more searchable and specific (e.g., "bear movie that gives me the lulz" → "Comedy bear movie Ted style")
