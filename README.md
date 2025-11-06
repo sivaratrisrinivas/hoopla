@@ -117,6 +117,10 @@ python cli/hybrid_search_cli.py rrf-search "family movie about bears in the wood
 
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
+
+# Evaluate search performance using golden dataset
+python cli/evaluation_cli.py --limit 3
+python cli/evaluation_cli.py --limit 6
 ```
 
 ## Available Commands
@@ -147,6 +151,9 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
 - `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` uses LLM to score each result individually, `--rerank-method batch` uses LLM to rerank all results in a single call (faster, fewer API calls), or `--rerank-method cross_encoder` uses a local neural network model for reranking (fastest, no API key required)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
+
+### Evaluation Commands
+- `evaluation_cli.py [--limit <int>]` - Evaluate search performance using a golden dataset. Calculates precision@k for each test query by comparing retrieved results against expected relevant documents. Default limit is 5. Requires `data/golden_dataset.json` with test cases containing queries and relevant document titles.
 
 ### Chunking utilities
 - **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
@@ -250,6 +257,12 @@ Results are printed as:
   - If all scores are identical, returns all 1.0 values
   - If no scores provided, prints nothing
   - Example: `normalize 0.5 2.3 1.2 0.5 0.1` outputs normalized scores with 4 decimal places
+
+### Evaluation
+- **Golden Dataset**: Evaluation uses `data/golden_dataset.json` containing test cases with queries and expected relevant document titles
+- **Precision@k**: Calculates precision at k by dividing the number of relevant documents retrieved in the top k results by k
+- **Output Format**: For each test query, displays the query, precision@k score, retrieved document IDs, and expected relevant document IDs
+- **RRF Search**: Evaluation uses RRF search (k=60) to retrieve results for each test query
 
 ### GPU/CUDA
 - The CLI runs on CPU by default and avoids initializing CUDA to prevent GPU capability mismatches.
