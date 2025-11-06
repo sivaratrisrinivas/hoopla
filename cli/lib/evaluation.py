@@ -1,6 +1,17 @@
+import json
+import os
+
+from dotenv import load_dotenv
+from google import genai
+
 from .hybrid_search import HybridSearch
 from .search_utils import load_movies, load_golden_dataset
 from .semantic_search import SemanticSearch
+
+load_dotenv()
+api_key = os.environ.get("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
+model = "gemini-2.0-flash-001"
 
 
 def evaluate_precision(retrieved_docs: list[str], relevant_docs: set[str], k: int = 5) -> float:
@@ -63,3 +74,48 @@ def evaluate_command(limit: int = 5):
         "limit": limit,
         "results": results_by_query,
     }
+
+
+def llm_judge_results(query: str, results: list[dict]) -> list[int]:
+    if not api_key:
+        print("GEMINI_API_KEY is not set")
+        return [0] * len(results)
+
+    formatted_results = []
+    for i, result in enumerate(results):
+        formatted_results.append(f"{i}. {result['title']}")
+    
+    prompt = f"""Rate how relevant each result is to this query on a 0-3 scale:
+
+Query: "{query}"
+
+Results:
+{chr(10).join(formatted_results)}
+
+Scale:
+- 3: Highly relevant
+- 2: Relevant
+- 1: Marginally relevant
+- 0: Not relevant
+
+Do NOT give any numbers out than 0, 1, 2, or 3.
+
+Return ONLY the scores in the same order you were given the documents. Return a valid JSON list, nothing else. For example:
+
+[2, 0, 3, 2, 0, 1]"""
+
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt,
+    )
+    ranking_text = (response.text or "").strip()
+    scores = json.loads(ranking_text)
+
+    # The map(int, scores) part converts each score from a string (or float) to an integer.
+    # So, if scores = ["2", "1", "3"], after map(int, scores) -> [2, 1, 3].
+    # This is needed because the LLM may return numbers as strings or floats, but we want actual integers for evaluation.
+    # Returning the mapped list ensures that all results have integer relevance labels, making further processing consistent and correct.
+    if len(scores) == len(results):
+        return list(map(int, scores))
+    
+    raise ValueError(f"LLM response parsing error. Expected {len(results)} scores, got {len(scores)}. Response: {scores}")

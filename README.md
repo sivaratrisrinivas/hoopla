@@ -115,6 +115,9 @@ python cli/hybrid_search_cli.py rrf-search "family movie about bears in the wood
 # RRF search with cross-encoder reranking (fastest, no API key required, runs locally)
 python cli/hybrid_search_cli.py rrf-search "family movie about bears in the woods" --rerank-method cross_encoder --limit 25
 
+# RRF search with LLM evaluation (rates results 0-3 for relevance)
+python cli/hybrid_search_cli.py rrf-search "family movie about bears in the woods" --evaluate
+
 # Normalize scores using min-max normalization
 python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 
@@ -149,7 +152,7 @@ python cli/evaluation_cli.py --limit 6
 ### Hybrid Search Commands
 - `hybrid_search <query> [--limit <int>]` - Search for movies using combined BM25 and semantic search results
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
-- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` uses LLM to score each result individually, `--rerank-method batch` uses LLM to rerank all results in a single call (faster, fewer API calls), or `--rerank-method cross_encoder` uses a local neural network model for reranking (fastest, no API key required)
+- `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>] [--evaluate]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` uses LLM to score each result individually, `--rerank-method batch` uses LLM to rerank all results in a single call (faster, fewer API calls), or `--rerank-method cross_encoder` uses a local neural network model for reranking (fastest, no API key required). Optional `--evaluate` uses LLM to rate result relevance on a 0-3 scale (3=Highly relevant, 2=Relevant, 1=Marginally relevant, 0=Not relevant)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Evaluation Commands
@@ -253,6 +256,12 @@ Results are printed as:
     - `--enhance expand`: Expands queries with synonyms and related terms to improve search coverage (e.g., "scary bear movie" → "scary horror grizzly bear movie terrifying film")
     - Requires `GEMINI_API_KEY` in `.env` file or environment variables
     - Falls back to original query if enhancement fails or API key is not set
+  - **Result Evaluation**: `--evaluate` option uses LLM to rate search result relevance after displaying results
+    - Scores each result on a 0-3 scale: 3=Highly relevant, 2=Relevant, 1=Marginally relevant, 0=Not relevant
+    - Prints evaluation report in format: `1. Movie Title: 2/3`
+    - Runs after search results are displayed
+    - Requires `GEMINI_API_KEY` in `.env` file or environment variables
+    - Returns all 0 scores if API key is not set
 - **Score Normalization**: `normalize` command performs min-max normalization to scale scores to [0, 1] range using formula `(score - min) / (max - min)`
   - If all scores are identical, returns all 1.0 values
   - If no scores provided, prints nothing
