@@ -22,6 +22,7 @@ def main():
         print(f"- Query: {query}")
         print(f"  - Precision@{limit}: {res['precision']:.4f}")
         print(f"  - Recall@{limit}: {res['recall']:.4f}")
+        print(f"  - F1 Score: {res['f1_score']:.4f}")
         print(f"  - Retrieved: {', '.join(res['retrieved'])}")
         print(f"  - Relevant: {', '.join(res['relevant'])}")
         print()

@@ -153,7 +153,7 @@ python cli/evaluation_cli.py --limit 6
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
 
 ### Evaluation Commands
-- `evaluation_cli.py [--limit <int>]` - Evaluate search performance using a golden dataset. Calculates precision@k and recall@k for each test query by comparing retrieved results against expected relevant documents. Default limit is 5. Requires `data/golden_dataset.json` with test cases containing queries and relevant document titles.
+- `evaluation_cli.py [--limit <int>]` - Evaluate search performance using a golden dataset. Calculates precision@k, recall@k, and F1 score for each test query by comparing retrieved results against expected relevant documents. Default limit is 5. Requires `data/golden_dataset.json` with test cases containing queries and relevant document titles.
 
 ### Chunking utilities
 - **Word chunks**: `chunk` splits words into fixed-size windows; `--overlap` is in words
@@ -262,7 +262,8 @@ Results are printed as:
 - **Golden Dataset**: Evaluation uses `data/golden_dataset.json` containing test cases with queries and expected relevant document titles
 - **Precision@k**: Calculates precision at k by dividing the number of relevant documents retrieved in the top k results by k
 - **Recall@k**: Calculates recall at k by dividing the number of relevant documents retrieved in the top k results by the total number of relevant documents
-- **Output Format**: For each test query, displays the query, precision@k score, recall@k score, retrieved document titles (top k), and expected relevant document titles
+- **F1 Score**: Calculates the harmonic mean of precision and recall using the formula `2 * (precision * recall) / (precision + recall)`. Returns 0 if both precision and recall are 0
+- **Output Format**: For each test query, displays the query, precision@k score, recall@k score, F1 score, retrieved document titles (top k), and expected relevant document titles
 - **RRF Search**: Evaluation uses RRF search (k=60) to retrieve results for each test query
 
 ### GPU/CUDA
