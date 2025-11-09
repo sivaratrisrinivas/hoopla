@@ -127,6 +127,9 @@ python cli/evaluation_cli.py --limit 6
 
 # RAG (Retrieval Augmented Generation) - search + generate answer
 python cli/augmented_generation_cli.py rag "movies about time travel"
+
+# Summarize search results
+python cli/augmented_generation_cli.py summarize "action movies" --limit 10
 ```
 
 ## Available Commands
@@ -160,6 +163,7 @@ python cli/augmented_generation_cli.py rag "movies about time travel"
 
 ### Retrieval Augmented Generation (RAG) Commands
 - `rag <query>` - Perform RAG: search for relevant movies using RRF search, then generate a comprehensive answer using Gemini API. Returns search results and AI-generated answer tailored for Hoopla users. Requires `GEMINI_API_KEY` in `.env` file or environment variables.
+- `summarize <query> [--limit <int>]` - Summarize search results: search for relevant movies using RRF search, then generate a concise summary synthesizing information from multiple results. Returns search results and AI-generated summary (3-4 sentences) that combines information from multiple sources. Default limit is 5. Requires `GEMINI_API_KEY` in `.env` file or environment variables.
 
 ### Evaluation Commands
 - `evaluation_cli.py [--limit <int>]` - Evaluate search performance using a golden dataset. Calculates precision@k, recall@k, and F1 score for each test query by comparing retrieved results against expected relevant documents. Default limit is 5. Requires `data/golden_dataset.json` with test cases containing queries and relevant document titles.
@@ -285,9 +289,11 @@ Results are printed as:
 - Uses RRF search (k=60) to retrieve relevant movies for the query
 - Searches `limit * SEARCH_MULTIPLIER` results (default limit=5, multiplier=5, so 25 results)
 - Generates context from search results by combining movie titles and descriptions
-- Uses Gemini 2.0 Flash model to generate comprehensive answers based on retrieved context
+- Uses Gemini 2.0 Flash model to generate answers/summaries based on retrieved context
 - Tailored for Hoopla users (movie streaming service context)
-- Output format: displays search result titles, then AI-generated answer
+- **RAG command**: Generates comprehensive answers addressing the query
+- **Summarize command**: Generates concise 3-4 sentence summaries synthesizing information from multiple sources, information-dense with key details about genre, plot, etc.
+- Output format: displays search result titles, then AI-generated answer/summary
 - Requires `GEMINI_API_KEY` in `.env` file or environment variables
 - Returns error if no search results found
 
