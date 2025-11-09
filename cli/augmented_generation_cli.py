@@ -1,6 +1,6 @@
 import argparse
 
-from lib.augmented_generation import rag_command, summarize_command
+from lib.augmented_generation import rag_command, summarize_command, summarize_with_citations_command
 
 def main():
     parser = argparse.ArgumentParser(description="Retrieval Augmented Generation CLI")
@@ -13,6 +13,10 @@ def main():
     summarize_parser = subparsers.add_parser("summarize", help="Summarize search results")
     summarize_parser.add_argument("query", type=str, help="Search query for summarization")
     summarize_parser.add_argument("--limit", type=int, default=5, help="Dfault number of results returned")
+
+    summarize_with_citations_parser = subparsers.add_parser("citations", help="Summarize search results with citations")
+    summarize_with_citations_parser.add_argument("query", type=str, help="Search query for summarization with citations")
+    summarize_with_citations_parser.add_argument("--limit", type=int, default=5, help="Default number of results returned")
 
     args = parser.parse_args()
 
@@ -32,6 +36,14 @@ def main():
                 print(f"  - {document['title']}")
             print()
             print("LLM Summary:")
+            print(result["summary"])
+        case "citations":
+            result = summarize_with_citations_command(args.query)
+            print("Search Results:")
+            for document in result["search_results"]:
+                print(f"  - {document['title']}")
+            print()
+            print("LLM Answer:")
             print(result["summary"])
         case _:
             parser.print_help()
