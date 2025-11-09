@@ -23,7 +23,7 @@ uv sync
 # Or using pip
 pip install -e .
 
-# Optional: For query enhancement (spell correction and query rewriting), create a .env file with:
+# Optional: For query enhancement and RAG, create a .env file with:
 # GEMINI_API_KEY=your_api_key_here
 ```
 
@@ -124,6 +124,9 @@ python cli/hybrid_search_cli.py normalize 0.5 2.3 1.2 0.5 0.1
 # Evaluate search performance using golden dataset
 python cli/evaluation_cli.py --limit 3
 python cli/evaluation_cli.py --limit 6
+
+# RAG (Retrieval Augmented Generation) - search + generate answer
+python cli/augmented_generation_cli.py rag "movies about time travel"
 ```
 
 ## Available Commands
@@ -154,6 +157,9 @@ python cli/evaluation_cli.py --limit 6
 - `weighted-search <query> [--alpha <float>] [--limit <int>]` - Weighted hybrid search with configurable alpha coefficient (default 0.5)
 - `rrf-search <query> [--k <int>] [--limit <int>] [--enhance <method>] [--rerank-method <method>] [--evaluate]` - Reciprocal Rank Fusion (RRF) hybrid search with configurable k constant (default 60). Optional `--enhance spell` enables spell correction, `--enhance rewrite` enables query rewriting, `--enhance expand` expands queries with related terms using Gemini API. Optional `--rerank-method individual` uses LLM to score each result individually, `--rerank-method batch` uses LLM to rerank all results in a single call (faster, fewer API calls), or `--rerank-method cross_encoder` uses a local neural network model for reranking (fastest, no API key required). Optional `--evaluate` uses LLM to rate result relevance on a 0-3 scale (3=Highly relevant, 2=Relevant, 1=Marginally relevant, 0=Not relevant)
 - `normalize <scores...>` - Normalize scores using min-max normalization to range [0, 1]
+
+### Retrieval Augmented Generation (RAG) Commands
+- `rag <query>` - Perform RAG: search for relevant movies using RRF search, then generate a comprehensive answer using Gemini API. Returns search results and AI-generated answer tailored for Hoopla users. Requires `GEMINI_API_KEY` in `.env` file or environment variables.
 
 ### Evaluation Commands
 - `evaluation_cli.py [--limit <int>]` - Evaluate search performance using a golden dataset. Calculates precision@k, recall@k, and F1 score for each test query by comparing retrieved results against expected relevant documents. Default limit is 5. Requires `data/golden_dataset.json` with test cases containing queries and relevant document titles.
@@ -274,6 +280,16 @@ Results are printed as:
 - **F1 Score**: Calculates the harmonic mean of precision and recall using the formula `2 * (precision * recall) / (precision + recall)`. Returns 0 if both precision and recall are 0
 - **Output Format**: For each test query, displays the query, precision@k score, recall@k score, F1 score, retrieved document titles (top k), and expected relevant document titles
 - **RRF Search**: Evaluation uses RRF search (k=60) to retrieve results for each test query
+
+### Retrieval Augmented Generation (RAG)
+- Uses RRF search (k=60) to retrieve relevant movies for the query
+- Searches `limit * SEARCH_MULTIPLIER` results (default limit=5, multiplier=5, so 25 results)
+- Generates context from search results by combining movie titles and descriptions
+- Uses Gemini 2.0 Flash model to generate comprehensive answers based on retrieved context
+- Tailored for Hoopla users (movie streaming service context)
+- Output format: displays search result titles, then AI-generated answer
+- Requires `GEMINI_API_KEY` in `.env` file or environment variables
+- Returns error if no search results found
 
 ### GPU/CUDA
 - The CLI runs on CPU by default and avoids initializing CUDA to prevent GPU capability mismatches.

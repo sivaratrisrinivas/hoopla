@@ -38,13 +38,12 @@ class HybridSearch:
         combined = combine_search_results(bm25_results, semantic_results, alpha)
         return combined[:limit]
 
-    def rrf_search(self, query: str, k: int, search_limit: int = 5000, return_limit: int = 10) -> list[dict]:
-        bm25_results = self._bm25_search(query, search_limit)
-        semantic_results = self.semantic_search.search_chunks(query, search_limit)
+    def rrf_search(self, query: str, k: int, limit: int = 10) -> list[dict]:
+        bm25_results = self._bm25_search(query, limit * 500)
+        semantic_results = self.semantic_search.search_chunks(query, limit * 500)
 
-        combined = rrf_combine_search_results(bm25_results, semantic_results, k)
-        return combined[:return_limit]
-
+        fused = rrf_combine_search_results(bm25_results, semantic_results, k) 
+        return fused[:limit]
 
 def normalize_scores(scores: list[float]) -> list[float]:
     """Normalize scores using min-max normalization to range [0, 1]."""
