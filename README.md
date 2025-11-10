@@ -122,6 +122,9 @@ python cli/describe_image_cli.py --image data/paddington.jpeg --query "find movi
 
 # Verify image embedding generation
 python cli/multimodal_search_cli.py verify_image_embedding data/paddington.jpeg
+
+# Search movies using image
+python cli/multimodal_search_cli.py image_search data/paddington.jpeg
 ```
 
 ### 4. RAG (AI-Powered Answers)
@@ -214,6 +217,7 @@ python cli/augmented_generation_cli.py question "What are some good horror movie
 | Command | Description |
 |---------|-------------|
 | `verify_image_embedding <image>` | Verify image embedding generation (512-dimensional CLIP embeddings) |
+| `image_search <image>` | Search for movies using image similarity (returns top 5 matches) |
 
 ---
 
@@ -297,6 +301,8 @@ python cli/semantic_search_cli.py embed_chunks
 - **Embeddings**: 512-dimensional vectors
 - **Device**: CPU by default (CUDA disabled to prevent GPU mismatches)
 - **Purpose**: Generate image embeddings for visual similarity search
+- **Search**: Compares image embeddings with movie title+description text embeddings using cosine similarity
+- **Format**: Movies formatted as "title: description" for CLIP text encoding
 
 ### Performance
 - **Device**: CPU by default (CUDA disabled to prevent GPU mismatches)
@@ -337,7 +343,12 @@ Total tokens:    1234
 
 **Multimodal search:**
 ```
-Embedding shape: 512 dimensions
+Image search results for: data/paddington.jpeg
+============================================================
+1. Paddington (similarity: 0.309)
+   A young Peruvian bear travels to London in search of a home...
+2. Paddington 2 (similarity: 0.285)
+   Paddington, now happily settled with the Brown family...
 ```
 
 ---
