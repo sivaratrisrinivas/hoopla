@@ -116,6 +116,9 @@ python cli/hybrid_search_cli.py rrf-search "bear movie that gives me the lulz" -
 
 # Reranking (improves result quality)
 python cli/hybrid_search_cli.py rrf-search "action movie" --rerank-method cross_encoder --limit 25
+
+# Multimodal query rewriting (image + text)
+python cli/describe_image_cli.py --image data/paddington.jpeg --query "find movies like this"
 ```
 
 ### 4. RAG (AI-Powered Answers)
@@ -194,6 +197,15 @@ python cli/augmented_generation_cli.py question "What are some good horror movie
 |---------|-------------|
 | `evaluation_cli.py [--limit <int>]` | Evaluate search performance using golden dataset (precision@k, recall@k, F1) |
 
+### Multimodal Query Rewriting (`describe_image_cli.py`)
+
+| Command | Description |
+|---------|-------------|
+| `--image <path>` | Path to image file (required) |
+| `--query <text>` | Text query to rewrite based on image (required) |
+
+**Note**: Requires `GEMINI_API_KEY` in `.env` or environment variables.
+
 ---
 
 ## Technical Details
@@ -264,6 +276,13 @@ python cli/semantic_search_cli.py embed_chunks
 - **Metrics**: Precision@k, Recall@k, F1 score
 - **Method**: RRF search (k=60) for retrieval
 
+### Multimodal Query Rewriting
+- **Model**: Gemini 2.0 Flash
+- **Input**: Image file + text query
+- **Process**: Analyzes image content, synthesizes with text query, rewrites for movie search
+- **Output**: Rewritten query optimized for movie database search + token usage
+- **MIME Types**: Auto-detects image format (JPEG, PNG, etc.), defaults to JPEG
+
 ### Performance
 - **Device**: CPU by default (CUDA disabled to prevent GPU mismatches)
 - **Caching**: Indexes and embeddings cached for fast repeated searches
@@ -295,12 +314,18 @@ RAG Response:
 [AI-generated answer]
 ```
 
+**Multimodal query rewriting:**
+```
+Rewritten query: Paddington Bear family-friendly animated adventure movies
+Total tokens:    1234
+```
+
 ---
 
 ## Notes
 
 - All search methods require the keyword index (`build` command)
 - Hybrid search and RAG require chunked embeddings (`embed_chunks` command)
-- RAG commands require `GEMINI_API_KEY` for AI features
+- RAG and multimodal query rewriting require `GEMINI_API_KEY` for AI features
 - Cache files are automatically rebuilt if dataset size changes
 - The system runs on CPU by default to avoid GPU compatibility issues
