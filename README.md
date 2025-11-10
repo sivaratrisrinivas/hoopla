@@ -119,6 +119,9 @@ python cli/hybrid_search_cli.py rrf-search "action movie" --rerank-method cross_
 
 # Multimodal query rewriting (image + text)
 python cli/describe_image_cli.py --image data/paddington.jpeg --query "find movies like this"
+
+# Verify image embedding generation
+python cli/multimodal_search_cli.py verify_image_embedding data/paddington.jpeg
 ```
 
 ### 4. RAG (AI-Powered Answers)
@@ -206,6 +209,12 @@ python cli/augmented_generation_cli.py question "What are some good horror movie
 
 **Note**: Requires `GEMINI_API_KEY` in `.env` or environment variables.
 
+### Multimodal Search (`multimodal_search_cli.py`)
+
+| Command | Description |
+|---------|-------------|
+| `verify_image_embedding <image>` | Verify image embedding generation (512-dimensional CLIP embeddings) |
+
 ---
 
 ## Technical Details
@@ -283,6 +292,12 @@ python cli/semantic_search_cli.py embed_chunks
 - **Output**: Rewritten query optimized for movie database search + token usage
 - **MIME Types**: Auto-detects image format (JPEG, PNG, etc.), defaults to JPEG
 
+### Multimodal Search
+- **Model**: CLIP ViT-B-32 (sentence-transformers)
+- **Embeddings**: 512-dimensional vectors
+- **Device**: CPU by default (CUDA disabled to prevent GPU mismatches)
+- **Purpose**: Generate image embeddings for visual similarity search
+
 ### Performance
 - **Device**: CPU by default (CUDA disabled to prevent GPU mismatches)
 - **Caching**: Indexes and embeddings cached for fast repeated searches
@@ -318,6 +333,11 @@ RAG Response:
 ```
 Rewritten query: Paddington Bear family-friendly animated adventure movies
 Total tokens:    1234
+```
+
+**Multimodal search:**
+```
+Embedding shape: 512 dimensions
 ```
 
 ---
