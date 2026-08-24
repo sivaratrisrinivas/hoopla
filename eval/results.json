@@ -26,9 +26,9 @@
     "memory_gb": 15.64
   },
   "index_build": {
-    "bm25_seconds": 16.25703894599974,
-    "chunk_embeddings_seconds": 333.46222768100006,
-    "total_seconds": 349.7192666269998,
+    "bm25_seconds": 16.30606772200008,
+    "chunk_embeddings_seconds": 337.05155869600003,
+    "total_seconds": 353.3576264180001,
     "cache_hit": false,
     "retriever": "HybridSearch"
   },
@@ -38,8 +38,8 @@
       "precision_at_k": 0.38,
       "recall_at_k": 0.5156898656898657,
       "f1": 0.36074481074481074,
-      "p95_query_latency_ms": 3418.887041650032,
-      "mean_query_latency_ms": 2634.4577837000543,
+      "p95_query_latency_ms": 3419.1827917999944,
+      "mean_query_latency_ms": 2643.5236635999445,
       "queries_evaluated": 10,
       "failures": [],
       "per_query": {
@@ -57,7 +57,7 @@
           "relevant": [
             "Paddington"
           ],
-          "latency_ms": 3435.0084550001156
+          "latency_ms": 3466.9550779999554
         },
         "talking teddy bear comedy": {
           "precision": 0.4,
@@ -74,7 +74,7 @@
             "Ted",
             "Ted 2"
           ],
-          "latency_ms": 3316.9099960000494
+          "latency_ms": 3318.2461490000605
         },
         "children's animated bear adventure": {
           "precision": 0.8,
@@ -102,7 +102,7 @@
             "Winnie the Pooh",
             "Yogi Bear"
           ],
-          "latency_ms": 3358.454020999943
+          "latency_ms": 3352.8496929998255
         },
         "friendship transformation magic with bears": {
           "precision": 0.4,
@@ -120,7 +120,7 @@
             "The Care Bears Movie",
             "The Jungle Book"
           ],
-          "latency_ms": 3399.18309199993
+          "latency_ms": 3360.794442000042
         },
         "dinosaur park": {
           "precision": 0.2,
@@ -136,7 +136,7 @@
           "relevant": [
             "Jurassic Park"
           ],
-          "latency_ms": 1878.322030000163
+          "latency_ms": 1873.1604829999924
         },
         "wizards and magic": {
           "precision": 0.2,
@@ -160,7 +160,7 @@
             "The Lord of the Rings: The Fellowship of the Ring",
             "The Sword in the Stone"
           ],
-          "latency_ms": 1815.559871000005
+          "latency_ms": 1817.4283439998362
         },
         "superhero saves the world": {
           "precision": 0.6,
@@ -183,7 +183,7 @@
             "The Incredibles",
             "Up, Up, and Away!"
           ],
-          "latency_ms": 2830.103238999982
+          "latency_ms": 2857.561083999826
         },
         "zombie apocalypse": {
           "precision": 0.2,
@@ -206,7 +206,7 @@
             "Shaun of the Dead",
             "The Return of the Living Dead"
           ],
-          "latency_ms": 1876.7823980001594
+          "latency_ms": 1881.6245250000065
         },
         "car racing": {
           "precision": 0.8,
@@ -228,7 +228,7 @@
             "The Fast and the Furious",
             "The Love Bug"
           ],
-          "latency_ms": 1873.227930000212
+          "latency_ms": 1934.107325000241
         },
         "romantic comedy wedding": {
           "precision": 0.0,
@@ -250,7 +250,7 @@
             "Wedding Crashers",
             "You, Me and Dupree"
           ],
-          "latency_ms": 2561.026804999983
+          "latency_ms": 2572.509512999659
         }
       }
     },
@@ -259,8 +259,8 @@
       "precision_at_k": 0.32,
       "recall_at_k": 0.4606227106227106,
       "f1": 0.3087606837606838,
-      "p95_query_latency_ms": 325.8614311999052,
-      "mean_query_latency_ms": 208.29771570001867,
+      "p95_query_latency_ms": 335.0836413998648,
+      "mean_query_latency_ms": 209.98252839995075,
       "queries_evaluated": 10,
       "failures": [],
       "per_query": {
@@ -278,7 +278,7 @@
           "relevant": [
             "Paddington"
           ],
-          "latency_ms": 246.97276200004126
+          "latency_ms": 253.68496800001594
         },
         "talking teddy bear comedy": {
           "precision": 0.4,
@@ -295,7 +295,7 @@
             "Ted",
             "Ted 2"
           ],
-          "latency_ms": 185.21044499993877
+          "latency_ms": 183.91293700005917
         },
         "children's animated bear adventure": {
           "precision": 0.4,
@@ -323,7 +323,7 @@
             "Winnie the Pooh",
             "Yogi Bear"
           ],
-          "latency_ms": 390.4067059997942
+          "latency_ms": 401.68255599974145
         },
         "friendship transformation magic with bears": {
           "precision": 0.2,
@@ -341,7 +341,7 @@
             "The Care Bears Movie",
             "The Jungle Book"
           ],
-          "latency_ms": 183.40540200006217
+          "latency_ms": 183.5871270000098
         },
         "dinosaur park": {
           "precision": 0.2,
@@ -357,7 +357,7 @@
           "relevant": [
             "Jurassic Park"
           ],
-          "latency_ms": 182.62239200021213
+          "latency_ms": 181.9312020002144
         },
         "wizards and magic": {
           "precision": 0.6,
@@ -381,7 +381,7 @@
             "The Lord of the Rings: The Fellowship of the Ring",
             "The Sword in the Stone"
           ],
-          "latency_ms": 180.14089899997998
+          "latency_ms": 178.0991030000223
         },
         "superhero saves the world": {
           "precision": 0.4,
@@ -404,7 +404,7 @@
             "The Incredibles",
             "Up, Up, and Away!"
           ],
-          "latency_ms": 177.49080500016134
+          "latency_ms": 178.56676799965499
         },
         "zombie apocalypse": {
           "precision": 0.4,
@@ -427,7 +427,7 @@
             "Shaun of the Dead",
             "The Return of the Living Dead"
           ],
-          "latency_ms": 175.8453819998067
+          "latency_ms": 176.9636559997707
         },
         "car racing": {
           "precision": 0.4,
@@ -449,7 +449,7 @@
             "The Fast and the Furious",
             "The Love Bug"
           ],
-          "latency_ms": 179.70100499996988
+          "latency_ms": 179.44304699994973
         },
         "romantic comedy wedding": {
           "precision": 0.0,
@@ -471,7 +471,7 @@
             "Wedding Crashers",
             "You, Me and Dupree"
           ],
-          "latency_ms": 181.18135900022025
+          "latency_ms": 181.95392000006905
         }
       }
     },
@@ -480,8 +480,8 @@
       "precision_at_k": 0.38,
       "recall_at_k": 0.5048687423687424,
       "f1": 0.35985958485958486,
-      "p95_query_latency_ms": 3773.45676344994,
-      "mean_query_latency_ms": 2913.8200675999087,
+      "p95_query_latency_ms": 3804.7640119498965,
+      "mean_query_latency_ms": 2924.1022318000432,
       "queries_evaluated": 10,
       "failures": [],
       "per_query": {
@@ -499,7 +499,7 @@
           "relevant": [
             "Paddington"
           ],
-          "latency_ms": 3596.199410999816
+          "latency_ms": 3596.6171660002146
         },
         "talking teddy bear comedy": {
           "precision": 0.4,
@@ -516,7 +516,7 @@
             "Ted",
             "Ted 2"
           ],
-          "latency_ms": 3767.992447999859
+          "latency_ms": 3801.233941999726
         },
         "children's animated bear adventure": {
           "precision": 0.4,
@@ -544,7 +544,7 @@
             "Winnie the Pooh",
             "Yogi Bear"
           ],
-          "latency_ms": 3548.4561429998394
+          "latency_ms": 3562.452601000132
         },
         "friendship transformation magic with bears": {
           "precision": 0.2,
@@ -562,7 +562,7 @@
             "The Care Bears Movie",
             "The Jungle Book"
           ],
-          "latency_ms": 3777.927567000006
+          "latency_ms": 3807.652251000036
         },
         "dinosaur park": {
           "precision": 0.2,
@@ -578,7 +578,7 @@
           "relevant": [
             "Jurassic Park"
           ],
-          "latency_ms": 2058.6033810000117
+          "latency_ms": 2083.0993350000426
         },
         "wizards and magic": {
           "precision": 0.4,
@@ -602,7 +602,7 @@
             "The Lord of the Rings: The Fellowship of the Ring",
             "The Sword in the Stone"
           ],
-          "latency_ms": 2273.5833179999645
+          "latency_ms": 2295.5203830001665
         },
         "superhero saves the world": {
           "precision": 0.8,
@@ -625,7 +625,7 @@
             "The Incredibles",
             "Up, Up, and Away!"
           ],
-          "latency_ms": 2839.0763359998346
+          "latency_ms": 2860.4876300000797
         },
         "zombie apocalypse": {
           "precision": 0.2,
@@ -648,7 +648,7 @@
             "Shaun of the Dead",
             "The Return of the Living Dead"
           ],
-          "latency_ms": 2072.668698999678
+          "latency_ms": 2029.1625270001532
         },
         "car racing": {
           "precision": 0.6,
@@ -670,7 +670,7 @@
             "The Fast and the Furious",
             "The Love Bug"
           ],
-          "latency_ms": 2359.3575720001354
+          "latency_ms": 2364.6717980000176
         },
         "romantic comedy wedding": {
           "precision": 0.4,
@@ -692,7 +692,7 @@
             "Wedding Crashers",
             "You, Me and Dupree"
           ],
-          "latency_ms": 2844.335800999943
+          "latency_ms": 2840.1246849998643
         }
       }
     },
@@ -701,8 +701,8 @@
       "precision_at_k": 0.36,
       "recall_at_k": 0.4823565323565323,
       "f1": 0.3357448107448108,
-      "p95_query_latency_ms": 3959.272465450158,
-      "mean_query_latency_ms": 3025.1363845000014,
+      "p95_query_latency_ms": 4038.1725153500383,
+      "mean_query_latency_ms": 3148.0080648999774,
       "queries_evaluated": 10,
       "failures": [],
       "per_query": {
@@ -720,7 +720,7 @@
           "relevant": [
             "Paddington"
           ],
-          "latency_ms": 4035.6251530001828
+          "latency_ms": 4059.9736280000798
         },
         "talking teddy bear comedy": {
           "precision": 0.4,
@@ -737,7 +737,7 @@
             "Ted",
             "Ted 2"
           ],
-          "latency_ms": 3653.0775410001297
+          "latency_ms": 3675.121976000355
         },
         "children's animated bear adventure": {
           "precision": 0.8,
@@ -765,7 +765,7 @@
             "Winnie the Pooh",
             "Yogi Bear"
           ],
-          "latency_ms": 3865.952514000128
+          "latency_ms": 4011.5267109999877
         },
         "friendship transformation magic with bears": {
           "precision": 0.2,
@@ -783,7 +783,7 @@
             "The Care Bears Movie",
             "The Jungle Book"
           ],
-          "latency_ms": 3714.006898000207
+          "latency_ms": 3663.8473449997946
         },
         "dinosaur park": {
           "precision": 0.2,
@@ -799,7 +799,7 @@
           "relevant": [
             "Jurassic Park"
           ],
-          "latency_ms": 2136.7088570000305
+          "latency_ms": 2441.4445149996027
         },
         "wizards and magic": {
           "precision": 0.2,
@@ -823,7 +823,7 @@
             "The Lord of the Rings: The Fellowship of the Ring",
             "The Sword in the Stone"
           ],
-          "latency_ms": 2309.8648760001197
+          "latency_ms": 2334.0254459999414
         },
         "superhero saves the world": {
           "precision": 0.4,
@@ -846,7 +846,7 @@
             "The Incredibles",
             "Up, Up, and Away!"
           ],
-          "latency_ms": 2909.1939629997796
+          "latency_ms": 3129.0516690000914
         },
         "zombie apocalypse": {
           "precision": 0.4,
@@ -869,7 +869,7 @@
             "Shaun of the Dead",
             "The Return of the Living Dead"
           ],
-          "latency_ms": 2348.2346839996353
+          "latency_ms": 2512.917288999688
         },
         "car racing": {
           "precision": 0.6,
@@ -891,7 +891,7 @@
             "The Fast and the Furious",
             "The Love Bug"
           ],
-          "latency_ms": 2150.6714510001075
+          "latency_ms": 2317.298239000138
         },
         "romantic comedy wedding": {
           "precision": 0.2,
@@ -913,7 +913,7 @@
             "Wedding Crashers",
             "You, Me and Dupree"
           ],
-          "latency_ms": 3128.0279079996944
+          "latency_ms": 3334.8738310000954
         }
       }
     }
@@ -935,7 +935,7 @@
       "relevant": [
         "Paddington"
       ],
-      "latency_ms": 3596.199410999816
+      "latency_ms": 3596.6171660002146
     },
     "talking teddy bear comedy": {
       "precision": 0.4,
@@ -952,7 +952,7 @@
         "Ted",
         "Ted 2"
       ],
-      "latency_ms": 3767.992447999859
+      "latency_ms": 3801.233941999726
     },
     "children's animated bear adventure": {
       "precision": 0.4,
@@ -980,7 +980,7 @@
         "Winnie the Pooh",
         "Yogi Bear"
       ],
-      "latency_ms": 3548.4561429998394
+      "latency_ms": 3562.452601000132
     },
     "friendship transformation magic with bears": {
       "precision": 0.2,
@@ -998,7 +998,7 @@
         "The Care Bears Movie",
         "The Jungle Book"
       ],
-      "latency_ms": 3777.927567000006
+      "latency_ms": 3807.652251000036
     },
     "dinosaur park": {
       "precision": 0.2,
@@ -1014,7 +1014,7 @@
       "relevant": [
         "Jurassic Park"
       ],
-      "latency_ms": 2058.6033810000117
+      "latency_ms": 2083.0993350000426
     },
     "wizards and magic": {
       "precision": 0.4,
@@ -1038,7 +1038,7 @@
         "The Lord of the Rings: The Fellowship of the Ring",
         "The Sword in the Stone"
       ],
-      "latency_ms": 2273.5833179999645
+      "latency_ms": 2295.5203830001665
     },
     "superhero saves the world": {
       "precision": 0.8,
@@ -1061,7 +1061,7 @@
         "The Incredibles",
         "Up, Up, and Away!"
       ],
-      "latency_ms": 2839.0763359998346
+      "latency_ms": 2860.4876300000797
     },
     "zombie apocalypse": {
       "precision": 0.2,
@@ -1084,7 +1084,7 @@
         "Shaun of the Dead",
         "The Return of the Living Dead"
       ],
-      "latency_ms": 2072.668698999678
+      "latency_ms": 2029.1625270001532
     },
     "car racing": {
       "precision": 0.6,
@@ -1106,7 +1106,7 @@
         "The Fast and the Furious",
         "The Love Bug"
       ],
-      "latency_ms": 2359.3575720001354
+      "latency_ms": 2364.6717980000176
     },
     "romantic comedy wedding": {
       "precision": 0.4,
@@ -1128,7 +1128,7 @@
         "Wedding Crashers",
         "You, Me and Dupree"
       ],
-      "latency_ms": 2844.335800999943
+      "latency_ms": 2840.1246849998643
     }
   }
 }
