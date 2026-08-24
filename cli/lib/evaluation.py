@@ -12,6 +12,8 @@ from .hybrid_search import HybridSearch
 from .keyword_search import InvertedIndex
 from .reranking import rerank
 from .search_utils import (
+    CHUNK_EMBEDDINGS_PATH,
+    CHUNK_METADATA_PATH,
     RRF_K,
     SEARCH_MULTIPLIER,
     load_golden_dataset,
@@ -82,13 +84,68 @@ def percentile(values: list[float], p: float) -> float | None:
 
 def _titles(search_results: list[dict], limit: int) -> list[str]:
     retrieved = []
+    seen = set()
     for result in search_results:
         title = result.get("title", "")
-        if title:
-            retrieved.append(title)
+        if not title or title in seen:
+            continue
+        seen.add(title)
+        retrieved.append(title)
         if len(retrieved) >= limit:
             break
     return retrieved
+
+
+def _retrieval_cache_paths() -> list[str]:
+    idx = InvertedIndex()
+    return [
+        idx.index_path,
+        idx.docmap_path,
+        idx.term_frequencies_path,
+        idx.doc_lengths_path,
+        CHUNK_EMBEDDINGS_PATH,
+        CHUNK_METADATA_PATH,
+    ]
+
+
+def _clear_retrieval_cache() -> None:
+    for path in _retrieval_cache_paths():
+        if os.path.exists(path):
+            os.remove(path)
+
+
+def _hybrid_search_from_built(
+    movies: list[dict],
+    semantic_search: ChunkedSemanticSearch,
+    idx: InvertedIndex,
+) -> HybridSearch:
+    # Skip HybridSearch.__init__ so the timed objects are the retriever we score.
+    hybrid_search = HybridSearch.__new__(HybridSearch)
+    hybrid_search.documents = movies
+    hybrid_search.semantic_search = semantic_search
+    hybrid_search.idx = idx
+    return hybrid_search
+
+
+def _build_scored_hybrid_search(
+    movies: list[dict],
+) -> tuple[HybridSearch, float, float]:
+    """Cold-build the HybridSearch instance that evaluate_command will score."""
+    _clear_retrieval_cache()
+
+    semantic_search = ChunkedSemanticSearch()
+    chunk_started = time.perf_counter()
+    semantic_search.build_chunk_embeddings(movies)
+    chunk_seconds = time.perf_counter() - chunk_started
+
+    idx = InvertedIndex()
+    bm25_started = time.perf_counter()
+    idx.build()
+    idx.save()
+    bm25_seconds = time.perf_counter() - bm25_started
+
+    hybrid_search = _hybrid_search_from_built(movies, semantic_search, idx)
+    return hybrid_search, bm25_seconds, chunk_seconds
 
 
 def _hardware_info() -> dict:
@@ -149,18 +206,9 @@ def evaluate_command(limit: int = 5) -> dict:
         }
     )
 
-    idx = InvertedIndex()
-    bm25_started = time.perf_counter()
-    idx.build()
-    idx.save()
-    bm25_build_seconds = time.perf_counter() - bm25_started
-
-    chunked = ChunkedSemanticSearch()
-    embed_started = time.perf_counter()
-    chunked.load_or_create_chunk_embeddings(movies)
-    chunk_embed_seconds = time.perf_counter() - embed_started
-
-    hybrid_search = HybridSearch(movies)
+    hybrid_search, bm25_build_seconds, chunk_embed_seconds = (
+        _build_scored_hybrid_search(movies)
+    )
 
     def retrieve_bm25(query: str) -> list[dict]:
         return hybrid_search._bm25_search(query, limit)
@@ -251,6 +299,8 @@ def evaluate_command(limit: int = 5) -> dict:
             "bm25_seconds": bm25_build_seconds,
             "chunk_embeddings_seconds": chunk_embed_seconds,
             "total_seconds": bm25_build_seconds + chunk_embed_seconds,
+            "cache_hit": False,
+            "retriever": "HybridSearch",
         },
         "configurations": configurations,
         # Preserve the original RRF-only shape for callers that still read it.
@@ -280,9 +330,10 @@ def format_markdown_table(report: dict) -> str:
         )
     build = report["index_build"]
     lines.append("")
+    cache_label = "cache hit" if build.get("cache_hit") else "cold rebuild"
     lines.append(
         f"Index build time: {build['total_seconds']:.2f}s "
-        f"(BM25 {build['bm25_seconds']:.2f}s, chunk embeddings {build['chunk_embeddings_seconds']:.2f}s)."
+        f"(BM25 {build['bm25_seconds']:.2f}s, chunk embeddings {build['chunk_embeddings_seconds']:.2f}s, {cache_label})."
     )
     missing = report["dataset"].get("missing_relevant_titles") or []
     if missing:
