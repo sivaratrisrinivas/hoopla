@@ -1,0 +1,1132 @@
+{
+  "schema": "hoopla-gs-t3-retrieval-v1",
+  "date": "2026-08-24",
+  "k": 5,
+  "rrf_k": 60,
+  "search_multiplier": 5,
+  "models": {
+    "embedding": "all-MiniLM-L6-v2",
+    "cross_encoder": "cross-encoder/ms-marco-TinyBERT-L2-v2"
+  },
+  "dataset": {
+    "path": "data/golden_dataset.json",
+    "num_queries": 10,
+    "num_documents": 5000,
+    "missing_relevant_titles": [
+      "Død snø"
+    ]
+  },
+  "hardware": {
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "python": "3.13.15",
+    "cpu_count": 4,
+    "cpu_model": "Intel(R) Xeon(R) Processor",
+    "memory_gb": 15.64
+  },
+  "index_build": {
+    "bm25_seconds": 16.5384531709999,
+    "chunk_embeddings_seconds": 356.4044641789999,
+    "total_seconds": 372.9429173499998
+  },
+  "configurations": {
+    "bm25": {
+      "label": "BM25",
+      "precision_at_k": 0.38,
+      "recall_at_k": 0.5156898656898657,
+      "f1": 0.36074481074481074,
+      "p95_query_latency_ms": 3562.816548899934,
+      "mean_query_latency_ms": 2732.929556499971,
+      "queries_evaluated": 10,
+      "failures": [],
+      "per_query": {
+        "cute british bear marmalade": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Paddington",
+            "Penguins of Madagascar",
+            "The Graves",
+            "The Duchess",
+            "Anna and the King"
+          ],
+          "relevant": [
+            "Paddington"
+          ],
+          "latency_ms": 3664.9495649999153
+        },
+        "talking teddy bear comedy": {
+          "precision": 0.4,
+          "recall": 1.0,
+          "f1_score": 0.5714285714285715,
+          "retrieved": [
+            "Ted",
+            "The Bear",
+            "Ted 2",
+            "Dolls",
+            "Arsenic and Old Lace"
+          ],
+          "relevant": [
+            "Ted",
+            "Ted 2"
+          ],
+          "latency_ms": 3430.16038199994
+        },
+        "children's animated bear adventure": {
+          "precision": 0.8,
+          "recall": 0.3076923076923077,
+          "f1_score": 0.4444444444444444,
+          "retrieved": [
+            "The Little Polar Bear 2: The Mysterious Island",
+            "The Little Polar Bear",
+            "Open Season",
+            "The Care Bears Movie",
+            "Paddington"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "Care Bears Movie II: A New Generation",
+            "Care Bears Nutcracker Suite",
+            "Open Season",
+            "The Berenstain Bears' Christmas Tree",
+            "The Care Bears Movie",
+            "The Country Bears",
+            "The Jungle Book",
+            "The Little Polar Bear",
+            "The Little Polar Bear 2: The Mysterious Island",
+            "The Many Adventures of Winnie the Pooh",
+            "Winnie the Pooh",
+            "Yogi Bear"
+          ],
+          "latency_ms": 3437.9873069999576
+        },
+        "friendship transformation magic with bears": {
+          "precision": 0.4,
+          "recall": 0.6666666666666666,
+          "f1_score": 0.5,
+          "retrieved": [
+            "The Care Bears Movie",
+            "The Bear",
+            "Brave",
+            "Brother Bear",
+            "Ted"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "The Care Bears Movie",
+            "The Jungle Book"
+          ],
+          "latency_ms": 3358.1543190000502
+        },
+        "dinosaur park": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Jurassic Park",
+            "The Wizard",
+            "Anonymous Rex",
+            "Carnosaur",
+            "Lost River"
+          ],
+          "relevant": [
+            "Jurassic Park"
+          ],
+          "latency_ms": 1873.2130210000832
+        },
+        "wizards and magic": {
+          "precision": 0.2,
+          "recall": 0.1111111111111111,
+          "f1_score": 0.14285714285714285,
+          "retrieved": [
+            "Winx Club: Il segreto del Regno Perduto",
+            "Doctor Mordrid",
+            "Harry Potter and the Sorcerer's Stone",
+            "Troll",
+            "Thundarr the Barbarian"
+          ],
+          "relevant": [
+            "Harry Potter and the Deathly Hallows: Part 1",
+            "Harry Potter and the Deathly Hallows: Part 2",
+            "Harry Potter and the Goblet of Fire",
+            "Harry Potter and the Order of the Phoenix",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Harry Potter and the Sorcerer's Stone",
+            "Oz the Great and Powerful",
+            "The Lord of the Rings: The Fellowship of the Ring",
+            "The Sword in the Stone"
+          ],
+          "latency_ms": 2606.230246999985
+        },
+        "superhero saves the world": {
+          "precision": 0.6,
+          "recall": 0.375,
+          "f1_score": 0.4615384615384615,
+          "retrieved": [
+            "Griff the Invisible",
+            "Megamind",
+            "Kick-Ass",
+            "The Specials",
+            "Up, Up, and Away!"
+          ],
+          "relevant": [
+            "Justice League: The Flashpoint Paradox",
+            "Kick-Ass",
+            "Megamind",
+            "Sky High",
+            "Superman II",
+            "Superman/Batman: Public Enemies",
+            "The Incredibles",
+            "Up, Up, and Away!"
+          ],
+          "latency_ms": 2643.2624520000445
+        },
+        "zombie apocalypse": {
+          "precision": 0.2,
+          "recall": 0.125,
+          "f1_score": 0.15384615384615385,
+          "retrieved": [
+            "Zombies! Zombies! Zombies!",
+            "Le notti del terrore",
+            "Dance of the Dead",
+            "Zombie Strippers",
+            "House of the Dead"
+          ],
+          "relevant": [
+            "Colin",
+            "Dance of the Dead",
+            "Død snø",
+            "I Am Legend",
+            "Pride and Prejudice and Zombies",
+            "Resident Evil: Apocalypse",
+            "Shaun of the Dead",
+            "The Return of the Living Dead"
+          ],
+          "latency_ms": 1828.616984999826
+        },
+        "car racing": {
+          "precision": 0.8,
+          "recall": 0.5714285714285714,
+          "f1_score": 0.6666666666666666,
+          "retrieved": [
+            "Need for Speed",
+            "Talladega Nights: The Ballad of Ricky Bobby",
+            "The Love Bug",
+            "Rush",
+            "Michel Vaillant"
+          ],
+          "relevant": [
+            "Cars",
+            "Furious Seven",
+            "Need for Speed",
+            "Rush",
+            "Talladega Nights: The Ballad of Ricky Bobby",
+            "The Fast and the Furious",
+            "The Love Bug"
+          ],
+          "latency_ms": 1865.3190569998515
+        },
+        "romantic comedy wedding": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0,
+          "retrieved": [
+            "The Colgate Comedy Hour",
+            "Mistress",
+            "Leyla ile Mecnun",
+            "Lego Scooby-Doo!: Haunted Hollywood",
+            "Kama Sutra: A Tale of Love"
+          ],
+          "relevant": [
+            "27 Dresses",
+            "Just Go with It",
+            "Runaway Bride",
+            "The Accidental Husband",
+            "The Wedding Planner",
+            "Wedding Crashers",
+            "You, Me and Dupree"
+          ],
+          "latency_ms": 2621.402230000058
+        }
+      }
+    },
+    "semantic": {
+      "label": "Semantic",
+      "precision_at_k": 0.32,
+      "recall_at_k": 0.4606227106227106,
+      "f1": 0.3087606837606838,
+      "p95_query_latency_ms": 379.28464089990223,
+      "mean_query_latency_ms": 223.39194329997554,
+      "queries_evaluated": 10,
+      "failures": [],
+      "per_query": {
+        "cute british bear marmalade": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Paddington",
+            "Legends of the Fall",
+            "The Queen",
+            "The Bear",
+            "Care Bears Nutcracker Suite"
+          ],
+          "relevant": [
+            "Paddington"
+          ],
+          "latency_ms": 207.65832999995837
+        },
+        "talking teddy bear comedy": {
+          "precision": 0.4,
+          "recall": 1.0,
+          "f1_score": 0.5714285714285715,
+          "retrieved": [
+            "Ted",
+            "Littleman",
+            "Destricted",
+            "Ted 2",
+            "Testament"
+          ],
+          "relevant": [
+            "Ted",
+            "Ted 2"
+          ],
+          "latency_ms": 193.37834299994938
+        },
+        "children's animated bear adventure": {
+          "precision": 0.4,
+          "recall": 0.15384615384615385,
+          "f1_score": 0.2222222222222222,
+          "retrieved": [
+            "Care Bears Nutcracker Suite",
+            "Alaska",
+            "An Unfinished Life",
+            "The Bear",
+            "The Berenstain Bears' Christmas Tree"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "Care Bears Movie II: A New Generation",
+            "Care Bears Nutcracker Suite",
+            "Open Season",
+            "The Berenstain Bears' Christmas Tree",
+            "The Care Bears Movie",
+            "The Country Bears",
+            "The Jungle Book",
+            "The Little Polar Bear",
+            "The Little Polar Bear 2: The Mysterious Island",
+            "The Many Adventures of Winnie the Pooh",
+            "Winnie the Pooh",
+            "Yogi Bear"
+          ],
+          "latency_ms": 519.7061679998569
+        },
+        "friendship transformation magic with bears": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "f1_score": 0.25,
+          "retrieved": [
+            "The Care Bears Movie",
+            "Care Bears Nutcracker Suite",
+            "Winnie the Pooh",
+            "The Bear",
+            "Care Bears Movie II: A New Generation"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "The Care Bears Movie",
+            "The Jungle Book"
+          ],
+          "latency_ms": 192.45865400012008
+        },
+        "dinosaur park": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Jurassic Park",
+            "The Crater Lake Monster",
+            "Lost River",
+            "The Flintstones in Viva Rock Vegas",
+            "The Good Dinosaur"
+          ],
+          "relevant": [
+            "Jurassic Park"
+          ],
+          "latency_ms": 189.8867780000728
+        },
+        "wizards and magic": {
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1_score": 0.42857142857142855,
+          "retrieved": [
+            "Troll",
+            "Drona",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Harry Potter and the Sorcerer's Stone",
+            "Harry Potter and the Order of the Phoenix"
+          ],
+          "relevant": [
+            "Harry Potter and the Deathly Hallows: Part 1",
+            "Harry Potter and the Deathly Hallows: Part 2",
+            "Harry Potter and the Goblet of Fire",
+            "Harry Potter and the Order of the Phoenix",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Harry Potter and the Sorcerer's Stone",
+            "Oz the Great and Powerful",
+            "The Lord of the Rings: The Fellowship of the Ring",
+            "The Sword in the Stone"
+          ],
+          "latency_ms": 187.78592800003935
+        },
+        "superhero saves the world": {
+          "precision": 0.4,
+          "recall": 0.25,
+          "f1_score": 0.3076923076923077,
+          "retrieved": [
+            "Kick-Ass",
+            "Justice League: Throne of Atlantis",
+            "Superman IV: The Quest for Peace",
+            "Justice League: The Flashpoint Paradox",
+            "Batman: The Dark Knight Returns, Part 1"
+          ],
+          "relevant": [
+            "Justice League: The Flashpoint Paradox",
+            "Kick-Ass",
+            "Megamind",
+            "Sky High",
+            "Superman II",
+            "Superman/Batman: Public Enemies",
+            "The Incredibles",
+            "Up, Up, and Away!"
+          ],
+          "latency_ms": 184.88494500002162
+        },
+        "zombie apocalypse": {
+          "precision": 0.4,
+          "recall": 0.25,
+          "f1_score": 0.3076923076923077,
+          "retrieved": [
+            "Le notti del terrore",
+            "The City of the Dead",
+            "Return of the Living Dead: Part II",
+            "Shaun of the Dead",
+            "Dance of the Dead"
+          ],
+          "relevant": [
+            "Colin",
+            "Dance of the Dead",
+            "Død snø",
+            "I Am Legend",
+            "Pride and Prejudice and Zombies",
+            "Resident Evil: Apocalypse",
+            "Shaun of the Dead",
+            "The Return of the Living Dead"
+          ],
+          "latency_ms": 185.72247899987815
+        },
+        "car racing": {
+          "precision": 0.4,
+          "recall": 0.2857142857142857,
+          "f1_score": 0.3333333333333333,
+          "retrieved": [
+            "Rush",
+            "The Brown Bunny",
+            "Fast and Furious",
+            "The Fast and the Furious",
+            "Hot Wheels Highway 35 World Race"
+          ],
+          "relevant": [
+            "Cars",
+            "Furious Seven",
+            "Need for Speed",
+            "Rush",
+            "Talladega Nights: The Ballad of Ricky Bobby",
+            "The Fast and the Furious",
+            "The Love Bug"
+          ],
+          "latency_ms": 184.58068699987962
+        },
+        "romantic comedy wedding": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0,
+          "retrieved": [
+            "They Won't Believe Me",
+            "The Calling",
+            "Kissing Jessica Stein",
+            "Kill Bill: Vol. 2",
+            "Wedding Belles"
+          ],
+          "relevant": [
+            "27 Dresses",
+            "Just Go with It",
+            "Runaway Bride",
+            "The Accidental Husband",
+            "The Wedding Planner",
+            "Wedding Crashers",
+            "You, Me and Dupree"
+          ],
+          "latency_ms": 187.8571209999791
+        }
+      }
+    },
+    "rrf": {
+      "label": "RRF",
+      "precision_at_k": 0.38,
+      "recall_at_k": 0.5048687423687424,
+      "f1": 0.35985958485958486,
+      "p95_query_latency_ms": 3886.4550919999488,
+      "mean_query_latency_ms": 2973.5960271000067,
+      "queries_evaluated": 10,
+      "failures": [],
+      "per_query": {
+        "cute british bear marmalade": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Paddington",
+            "The Duchess",
+            "The Great Bear",
+            "The Bear",
+            "Care Bears Movie II: A New Generation"
+          ],
+          "relevant": [
+            "Paddington"
+          ],
+          "latency_ms": 3634.1644019998967
+        },
+        "talking teddy bear comedy": {
+          "precision": 0.4,
+          "recall": 1.0,
+          "f1_score": 0.5714285714285715,
+          "retrieved": [
+            "Ted",
+            "Ted 2",
+            "The Bear",
+            "Littleman",
+            "Arsenic and Old Lace"
+          ],
+          "relevant": [
+            "Ted",
+            "Ted 2"
+          ],
+          "latency_ms": 3890.0929909998467
+        },
+        "children's animated bear adventure": {
+          "precision": 0.4,
+          "recall": 0.15384615384615385,
+          "f1_score": 0.2222222222222222,
+          "retrieved": [
+            "Alaska",
+            "The Bear",
+            "Paddington",
+            "The Little Polar Bear 2: The Mysterious Island",
+            "Open Season"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "Care Bears Movie II: A New Generation",
+            "Care Bears Nutcracker Suite",
+            "Open Season",
+            "The Berenstain Bears' Christmas Tree",
+            "The Care Bears Movie",
+            "The Country Bears",
+            "The Jungle Book",
+            "The Little Polar Bear",
+            "The Little Polar Bear 2: The Mysterious Island",
+            "The Many Adventures of Winnie the Pooh",
+            "Winnie the Pooh",
+            "Yogi Bear"
+          ],
+          "latency_ms": 3577.3996909999823
+        },
+        "friendship transformation magic with bears": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "f1_score": 0.25,
+          "retrieved": [
+            "The Care Bears Movie",
+            "The Bear",
+            "Care Bears Movie II: A New Generation",
+            "Ted",
+            "Brave"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "The Care Bears Movie",
+            "The Jungle Book"
+          ],
+          "latency_ms": 3882.0087710000735
+        },
+        "dinosaur park": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Jurassic Park",
+            "Lost River",
+            "Carnosaur",
+            "The Wizard",
+            "A Sound of Thunder"
+          ],
+          "relevant": [
+            "Jurassic Park"
+          ],
+          "latency_ms": 2091.770224000129
+        },
+        "wizards and magic": {
+          "precision": 0.4,
+          "recall": 0.2222222222222222,
+          "f1_score": 0.2857142857142857,
+          "retrieved": [
+            "Troll",
+            "Harry Potter and the Sorcerer's Stone",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Winx Club: Il segreto del Regno Perduto",
+            "The Wiz"
+          ],
+          "relevant": [
+            "Harry Potter and the Deathly Hallows: Part 1",
+            "Harry Potter and the Deathly Hallows: Part 2",
+            "Harry Potter and the Goblet of Fire",
+            "Harry Potter and the Order of the Phoenix",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Harry Potter and the Sorcerer's Stone",
+            "Oz the Great and Powerful",
+            "The Lord of the Rings: The Fellowship of the Ring",
+            "The Sword in the Stone"
+          ],
+          "latency_ms": 2331.9051610001225
+        },
+        "superhero saves the world": {
+          "precision": 0.8,
+          "recall": 0.5,
+          "f1_score": 0.6153846153846154,
+          "retrieved": [
+            "Kick-Ass",
+            "Superman/Batman: Public Enemies",
+            "Justice League: The Flashpoint Paradox",
+            "Griff the Invisible",
+            "Megamind"
+          ],
+          "relevant": [
+            "Justice League: The Flashpoint Paradox",
+            "Kick-Ass",
+            "Megamind",
+            "Sky High",
+            "Superman II",
+            "Superman/Batman: Public Enemies",
+            "The Incredibles",
+            "Up, Up, and Away!"
+          ],
+          "latency_ms": 2857.0106940001097
+        },
+        "zombie apocalypse": {
+          "precision": 0.2,
+          "recall": 0.125,
+          "f1_score": 0.15384615384615385,
+          "retrieved": [
+            "Le notti del terrore",
+            "Dance of the Dead",
+            "The City of the Dead",
+            "Zombies! Zombies! Zombies!",
+            "Zombie Strippers"
+          ],
+          "relevant": [
+            "Colin",
+            "Dance of the Dead",
+            "Død snø",
+            "I Am Legend",
+            "Pride and Prejudice and Zombies",
+            "Resident Evil: Apocalypse",
+            "Shaun of the Dead",
+            "The Return of the Living Dead"
+          ],
+          "latency_ms": 2129.2320200000177
+        },
+        "car racing": {
+          "precision": 0.6,
+          "recall": 0.42857142857142855,
+          "f1_score": 0.5,
+          "retrieved": [
+            "Rush",
+            "Hot Wheels Highway 35 World Race",
+            "Need for Speed",
+            "The Fast and the Furious",
+            "Cannonball!"
+          ],
+          "relevant": [
+            "Cars",
+            "Furious Seven",
+            "Need for Speed",
+            "Rush",
+            "Talladega Nights: The Ballad of Ricky Bobby",
+            "The Fast and the Furious",
+            "The Love Bug"
+          ],
+          "latency_ms": 2465.3071799998543
+        },
+        "romantic comedy wedding": {
+          "precision": 0.4,
+          "recall": 0.2857142857142857,
+          "f1_score": 0.3333333333333333,
+          "retrieved": [
+            "They Won't Believe Me",
+            "L'amant",
+            "The Accidental Husband",
+            "27 Dresses",
+            "The Other Sister"
+          ],
+          "relevant": [
+            "27 Dresses",
+            "Just Go with It",
+            "Runaway Bride",
+            "The Accidental Husband",
+            "The Wedding Planner",
+            "Wedding Crashers",
+            "You, Me and Dupree"
+          ],
+          "latency_ms": 2877.069137000035
+        }
+      }
+    },
+    "rrf_cross_encoder": {
+      "label": "RRF + cross-encoder",
+      "precision_at_k": 0.36,
+      "recall_at_k": 0.4823565323565323,
+      "f1": 0.3357448107448108,
+      "p95_query_latency_ms": 4157.548863399995,
+      "mean_query_latency_ms": 3180.9970917999863,
+      "queries_evaluated": 10,
+      "failures": [],
+      "per_query": {
+        "cute british bear marmalade": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Paddington",
+            "The Great Muppet Caper",
+            "Carry On... Up the Khyber",
+            "The Tamarind Seed",
+            "The Bear"
+          ],
+          "relevant": [
+            "Paddington"
+          ],
+          "latency_ms": 4033.0226220000895
+        },
+        "talking teddy bear comedy": {
+          "precision": 0.4,
+          "recall": 1.0,
+          "f1_score": 0.5714285714285715,
+          "retrieved": [
+            "Ted",
+            "The Bear",
+            "Ted 2",
+            "Dolls",
+            "Arsenic and Old Lace"
+          ],
+          "relevant": [
+            "Ted",
+            "Ted 2"
+          ],
+          "latency_ms": 3776.8743599999652
+        },
+        "children's animated bear adventure": {
+          "precision": 0.8,
+          "recall": 0.3076923076923077,
+          "f1_score": 0.4444444444444444,
+          "retrieved": [
+            "The Care Bears Movie",
+            "Sing",
+            "The Country Bears",
+            "Open Season",
+            "The Little Polar Bear 2: The Mysterious Island"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "Care Bears Movie II: A New Generation",
+            "Care Bears Nutcracker Suite",
+            "Open Season",
+            "The Berenstain Bears' Christmas Tree",
+            "The Care Bears Movie",
+            "The Country Bears",
+            "The Jungle Book",
+            "The Little Polar Bear",
+            "The Little Polar Bear 2: The Mysterious Island",
+            "The Many Adventures of Winnie the Pooh",
+            "Winnie the Pooh",
+            "Yogi Bear"
+          ],
+          "latency_ms": 4259.433969999918
+        },
+        "friendship transformation magic with bears": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "f1_score": 0.25,
+          "retrieved": [
+            "The Care Bears Movie",
+            "The Little Polar Bear",
+            "The Bear",
+            "Brave",
+            "The Country Bears"
+          ],
+          "relevant": [
+            "Brother Bear",
+            "The Care Bears Movie",
+            "The Jungle Book"
+          ],
+          "latency_ms": 3757.7873479999653
+        },
+        "dinosaur park": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "retrieved": [
+            "Jurassic Park",
+            "When Dinosaurs Ruled the Earth",
+            "The Good Dinosaur",
+            "Dinocroc",
+            "Anonymous Rex"
+          ],
+          "relevant": [
+            "Jurassic Park"
+          ],
+          "latency_ms": 2536.1432110000806
+        },
+        "wizards and magic": {
+          "precision": 0.2,
+          "recall": 0.1111111111111111,
+          "f1_score": 0.14285714285714285,
+          "retrieved": [
+            "Thundarr the Barbarian",
+            "Harry Potter and the Sorcerer's Stone",
+            "Dungeons & Dragons",
+            "Maburaho",
+            "Winx Club: Il segreto del Regno Perduto"
+          ],
+          "relevant": [
+            "Harry Potter and the Deathly Hallows: Part 1",
+            "Harry Potter and the Deathly Hallows: Part 2",
+            "Harry Potter and the Goblet of Fire",
+            "Harry Potter and the Order of the Phoenix",
+            "Harry Potter and the Prisoner of Azkaban",
+            "Harry Potter and the Sorcerer's Stone",
+            "Oz the Great and Powerful",
+            "The Lord of the Rings: The Fellowship of the Ring",
+            "The Sword in the Stone"
+          ],
+          "latency_ms": 2223.939900000005
+        },
+        "superhero saves the world": {
+          "precision": 0.4,
+          "recall": 0.25,
+          "f1_score": 0.3076923076923077,
+          "retrieved": [
+            "Superman/Batman: Public Enemies",
+            "Kick-Ass",
+            "Super Robot Monkey Team Hyperforce Go!",
+            "Superman: Unbound",
+            "Superman and the Mole-Men"
+          ],
+          "relevant": [
+            "Justice League: The Flashpoint Paradox",
+            "Kick-Ass",
+            "Megamind",
+            "Sky High",
+            "Superman II",
+            "Superman/Batman: Public Enemies",
+            "The Incredibles",
+            "Up, Up, and Away!"
+          ],
+          "latency_ms": 3041.2835119998363
+        },
+        "zombie apocalypse": {
+          "precision": 0.4,
+          "recall": 0.25,
+          "f1_score": 0.3076923076923077,
+          "retrieved": [
+            "Colin",
+            "Pride and Prejudice and Zombies",
+            "Zombies! Zombies! Zombies!",
+            "Zombie Strippers",
+            "Le notti del terrore"
+          ],
+          "relevant": [
+            "Colin",
+            "Dance of the Dead",
+            "Død snø",
+            "I Am Legend",
+            "Pride and Prejudice and Zombies",
+            "Resident Evil: Apocalypse",
+            "Shaun of the Dead",
+            "The Return of the Living Dead"
+          ],
+          "latency_ms": 2611.6438379999636
+        },
+        "car racing": {
+          "precision": 0.6,
+          "recall": 0.42857142857142855,
+          "f1_score": 0.5,
+          "retrieved": [
+            "The Love Bug",
+            "Hot Wheels Highway 35 World Race",
+            "Need for Speed",
+            "The Fast and the Furious",
+            "Michel Vaillant"
+          ],
+          "relevant": [
+            "Cars",
+            "Furious Seven",
+            "Need for Speed",
+            "Rush",
+            "Talladega Nights: The Ballad of Ricky Bobby",
+            "The Fast and the Furious",
+            "The Love Bug"
+          ],
+          "latency_ms": 2233.4201429998757
+        },
+        "romantic comedy wedding": {
+          "precision": 0.2,
+          "recall": 0.14285714285714285,
+          "f1_score": 0.16666666666666666,
+          "retrieved": [
+            "The Accidental Husband",
+            "The Calling",
+            "Mistress",
+            "Kama Sutra: A Tale of Love",
+            "The Song"
+          ],
+          "relevant": [
+            "27 Dresses",
+            "Just Go with It",
+            "Runaway Bride",
+            "The Accidental Husband",
+            "The Wedding Planner",
+            "Wedding Crashers",
+            "You, Me and Dupree"
+          ],
+          "latency_ms": 3336.4220140001635
+        }
+      }
+    }
+  },
+  "test_cases_count": 10,
+  "limit": 5,
+  "results": {
+    "cute british bear marmalade": {
+      "precision": 0.2,
+      "recall": 1.0,
+      "f1_score": 0.33333333333333337,
+      "retrieved": [
+        "Paddington",
+        "The Duchess",
+        "The Great Bear",
+        "The Bear",
+        "Care Bears Movie II: A New Generation"
+      ],
+      "relevant": [
+        "Paddington"
+      ],
+      "latency_ms": 3634.1644019998967
+    },
+    "talking teddy bear comedy": {
+      "precision": 0.4,
+      "recall": 1.0,
+      "f1_score": 0.5714285714285715,
+      "retrieved": [
+        "Ted",
+        "Ted 2",
+        "The Bear",
+        "Littleman",
+        "Arsenic and Old Lace"
+      ],
+      "relevant": [
+        "Ted",
+        "Ted 2"
+      ],
+      "latency_ms": 3890.0929909998467
+    },
+    "children's animated bear adventure": {
+      "precision": 0.4,
+      "recall": 0.15384615384615385,
+      "f1_score": 0.2222222222222222,
+      "retrieved": [
+        "Alaska",
+        "The Bear",
+        "Paddington",
+        "The Little Polar Bear 2: The Mysterious Island",
+        "Open Season"
+      ],
+      "relevant": [
+        "Brother Bear",
+        "Care Bears Movie II: A New Generation",
+        "Care Bears Nutcracker Suite",
+        "Open Season",
+        "The Berenstain Bears' Christmas Tree",
+        "The Care Bears Movie",
+        "The Country Bears",
+        "The Jungle Book",
+        "The Little Polar Bear",
+        "The Little Polar Bear 2: The Mysterious Island",
+        "The Many Adventures of Winnie the Pooh",
+        "Winnie the Pooh",
+        "Yogi Bear"
+      ],
+      "latency_ms": 3577.3996909999823
+    },
+    "friendship transformation magic with bears": {
+      "precision": 0.2,
+      "recall": 0.3333333333333333,
+      "f1_score": 0.25,
+      "retrieved": [
+        "The Care Bears Movie",
+        "The Bear",
+        "Care Bears Movie II: A New Generation",
+        "Ted",
+        "Brave"
+      ],
+      "relevant": [
+        "Brother Bear",
+        "The Care Bears Movie",
+        "The Jungle Book"
+      ],
+      "latency_ms": 3882.0087710000735
+    },
+    "dinosaur park": {
+      "precision": 0.2,
+      "recall": 1.0,
+      "f1_score": 0.33333333333333337,
+      "retrieved": [
+        "Jurassic Park",
+        "Lost River",
+        "Carnosaur",
+        "The Wizard",
+        "A Sound of Thunder"
+      ],
+      "relevant": [
+        "Jurassic Park"
+      ],
+      "latency_ms": 2091.770224000129
+    },
+    "wizards and magic": {
+      "precision": 0.4,
+      "recall": 0.2222222222222222,
+      "f1_score": 0.2857142857142857,
+      "retrieved": [
+        "Troll",
+        "Harry Potter and the Sorcerer's Stone",
+        "Harry Potter and the Prisoner of Azkaban",
+        "Winx Club: Il segreto del Regno Perduto",
+        "The Wiz"
+      ],
+      "relevant": [
+        "Harry Potter and the Deathly Hallows: Part 1",
+        "Harry Potter and the Deathly Hallows: Part 2",
+        "Harry Potter and the Goblet of Fire",
+        "Harry Potter and the Order of the Phoenix",
+        "Harry Potter and the Prisoner of Azkaban",
+        "Harry Potter and the Sorcerer's Stone",
+        "Oz the Great and Powerful",
+        "The Lord of the Rings: The Fellowship of the Ring",
+        "The Sword in the Stone"
+      ],
+      "latency_ms": 2331.9051610001225
+    },
+    "superhero saves the world": {
+      "precision": 0.8,
+      "recall": 0.5,
+      "f1_score": 0.6153846153846154,
+      "retrieved": [
+        "Kick-Ass",
+        "Superman/Batman: Public Enemies",
+        "Justice League: The Flashpoint Paradox",
+        "Griff the Invisible",
+        "Megamind"
+      ],
+      "relevant": [
+        "Justice League: The Flashpoint Paradox",
+        "Kick-Ass",
+        "Megamind",
+        "Sky High",
+        "Superman II",
+        "Superman/Batman: Public Enemies",
+        "The Incredibles",
+        "Up, Up, and Away!"
+      ],
+      "latency_ms": 2857.0106940001097
+    },
+    "zombie apocalypse": {
+      "precision": 0.2,
+      "recall": 0.125,
+      "f1_score": 0.15384615384615385,
+      "retrieved": [
+        "Le notti del terrore",
+        "Dance of the Dead",
+        "The City of the Dead",
+        "Zombies! Zombies! Zombies!",
+        "Zombie Strippers"
+      ],
+      "relevant": [
+        "Colin",
+        "Dance of the Dead",
+        "Død snø",
+        "I Am Legend",
+        "Pride and Prejudice and Zombies",
+        "Resident Evil: Apocalypse",
+        "Shaun of the Dead",
+        "The Return of the Living Dead"
+      ],
+      "latency_ms": 2129.2320200000177
+    },
+    "car racing": {
+      "precision": 0.6,
+      "recall": 0.42857142857142855,
+      "f1_score": 0.5,
+      "retrieved": [
+        "Rush",
+        "Hot Wheels Highway 35 World Race",
+        "Need for Speed",
+        "The Fast and the Furious",
+        "Cannonball!"
+      ],
+      "relevant": [
+        "Cars",
+        "Furious Seven",
+        "Need for Speed",
+        "Rush",
+        "Talladega Nights: The Ballad of Ricky Bobby",
+        "The Fast and the Furious",
+        "The Love Bug"
+      ],
+      "latency_ms": 2465.3071799998543
+    },
+    "romantic comedy wedding": {
+      "precision": 0.4,
+      "recall": 0.2857142857142857,
+      "f1_score": 0.3333333333333333,
+      "retrieved": [
+        "They Won't Believe Me",
+        "L'amant",
+        "The Accidental Husband",
+        "27 Dresses",
+        "The Other Sister"
+      ],
+      "relevant": [
+        "27 Dresses",
+        "Just Go with It",
+        "Runaway Bride",
+        "The Accidental Husband",
+        "The Wedding Planner",
+        "Wedding Crashers",
+        "You, Me and Dupree"
+      ],
+      "latency_ms": 2877.069137000035
+    }
+  }
+}
