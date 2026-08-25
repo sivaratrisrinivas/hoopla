@@ -8,9 +8,16 @@ from sentence_transformers import CrossEncoder
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
 model = "gemini-2.0-flash"
 cross_encoder = CrossEncoder("cross-encoder/ms-marco-TinyBERT-L2-v2")
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 
 def llm_rerank_individual(
@@ -34,7 +41,7 @@ Give me ONLY the number in your response, no other text or explanation.
 
 Score:"""
 
-        response = client.models.generate_content(model=model, contents=prompt)
+        response = _get_client().models.generate_content(model=model, contents=prompt)
         score_text = (response.text or "").strip()
         score = int(score_text)
         scored_docs.append({**doc, "individual_score": score})
@@ -71,7 +78,7 @@ Return ONLY the IDs in order of relevance (best match first). Return a valid JSO
 [75, 12, 34, 2, 1]
 """
 
-    response = client.models.generate_content(model=model, contents=prompt)
+    response = _get_client().models.generate_content(model=model, contents=prompt)
     ranking_text = (response.text or "").strip()
 
     parsed_ids = json.loads(ranking_text)

@@ -21,6 +21,31 @@ Together, these methods can be combined for even better results.
 
 ---
 
+## Results
+
+Retrieval quality on `data/golden_dataset.json` (10 queries, 5000 movies, k=5). Measured 2026-08-24 on an Intel Xeon (4 CPUs, 15.64 GB RAM, Python 3.13.15). Embedding model: `all-MiniLM-L6-v2`. Reranker: `cross-encoder/ms-marco-TinyBERT-L2-v2`.
+
+| Configuration | Precision@5 | Recall@5 | F1 | p95 query latency (ms) |
+|---|---|---|---|---|
+| BM25 | 0.3800 | 0.5157 | 0.3607 | 3419.2 |
+| Semantic | 0.3200 | 0.4606 | 0.3088 | 335.1 |
+| RRF | 0.3800 | 0.5049 | 0.3599 | 3804.8 |
+| RRF + cross-encoder | 0.3600 | 0.4824 | 0.3357 | 4038.2 |
+
+Index build time: 353.36s (BM25 16.31s, chunk embeddings 337.05s, cold rebuild). The eval always rebuilds the HybridSearch index it scores, so a cache hit cannot rewrite this number to ~0.
+
+The golden set lists `Død snø` as relevant for the zombie query. That title is not in `movies.json`, so no method can retrieve it.
+
+Reproduce from a clean checkout (downloads `data/movies.json` if missing):
+
+```bash
+uv run python eval/run_retrieval_metrics.py
+```
+
+This writes `eval/results.json` and prints the table.
+
+---
+
 ## Installation
 
 ```bash

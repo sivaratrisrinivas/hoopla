@@ -6,8 +6,15 @@ from google import genai
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
 model = "gemini-2.0-flash-001"
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 def spell_correct(query: str) -> str:
     prompt = f"""Fix any spelling errors in this movie search query.
@@ -18,7 +25,7 @@ Query: "{query}"
 
 If no errors, return the original query.
 Corrected:"""
-    response = client.models.generate_content(
+    response = _get_client().models.generate_content(
         model=model,
         contents=prompt,
     )
@@ -61,7 +68,7 @@ Examples:
 
 
 Rewritten query:"""
-    response = client.models.generate_content(
+    response = _get_client().models.generate_content(
         model=model,
         contents=prompt,
     )
@@ -84,7 +91,7 @@ Examples:
 
 Query: "{query}"
 """
-    response = client.models.generate_content(
+    response = _get_client().models.generate_content(
         model=model,
         contents=prompt,
     )
