@@ -1,12 +1,12 @@
-# Hoopla
+# Bingo
 
 A movie search engine that combines BM25 ranking and semantic search to find relevant movies from large datasets.
 
 ---
 
-## What is Hoopla?
+## What is Bingo?
 
-Hoopla is a command-line tool that searches through thousands of movie descriptions using two complementary approaches:
+Bingo is a command-line tool that searches through thousands of movie descriptions using two complementary approaches:
 
 - **BM25 Search**: Smart keyword matching that considers word frequency, rarity, and document length
 - **Semantic Search**: AI-powered understanding that finds conceptually similar movies even without exact keyword matches
@@ -50,8 +50,8 @@ This writes `eval/results.json` and prints the table.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd hoopla
+git clone https://github.com/sivaratrisrinivas/Bingo
+cd Bingo
 
 # Install dependencies (uv recommended)
 uv sync
